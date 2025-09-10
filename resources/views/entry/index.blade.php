@@ -18,7 +18,7 @@
 
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Datatables</h5>
+                        <div class="card-title"><a href="{{ route('entries.create') }}" class="btn btn-primary mb-3">Tambah Entry Baru</a></div>
 
                         <!-- Table with stripped rows -->
                         <table class="table datatable">

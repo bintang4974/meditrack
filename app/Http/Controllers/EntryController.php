@@ -26,7 +26,7 @@ class EntryController extends Controller
     {
         $pageTitle = 'Create Entry';
         $categories = Category::all();
-        return view('entries.create', compact('categories', 'pageTitle'));
+        return view('entry.create', compact('categories', 'pageTitle'));
     }
 
     /**
@@ -50,7 +50,7 @@ class EntryController extends Controller
             'created_by' => Auth::id(),
         ]);
 
-        return redirect()->route('entries.index')->with('success', 'Entry berhasil ditambahkan');
+        return redirect()->route('entry.index')->with('success', 'Entry berhasil ditambahkan');
     }
 
     /**
