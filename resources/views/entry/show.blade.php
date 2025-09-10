@@ -17,66 +17,117 @@
             <div class="col-lg-12">
                 <h3>Detail Entry</h3>
 
-                <div class="card mb-3">
-                    <div class="card-header">
-                        {{ $entry->category->category_main }} - {{ $entry->category->category_sub }}
+                <!-- Tabs -->
+                <ul class="nav nav-tabs" id="entryTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general"
+                            type="button" role="tab">Informasi Umum</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="operation-tab" data-bs-toggle="tab" data-bs-target="#operation"
+                            type="button" role="tab">Operasi</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="waitlist-tab" data-bs-toggle="tab" data-bs-target="#waitlist"
+                            type="button" role="tab">Waitlist</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="attachments-tab" data-bs-toggle="tab" data-bs-target="#attachments"
+                            type="button" role="tab">Lampiran</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content mt-3">
+                    <!-- General Info -->
+                    <div class="tab-pane fade show active" id="general" role="tabpanel">
+                        <div class="card">
+                            <div class="card-body">
+                                <p><strong>Kode Entry:</strong> {{ $entry->entry_key }}</p>
+                                <p><strong>Kategori:</strong> {{ $entry->category->category_main }} -
+                                    {{ $entry->category->category_sub }}</p>
+                                <p><strong>Deskripsi:</strong> {{ $entry->entry_description }}</p>
+                                <p><strong>Tanggal:</strong> {{ $entry->entry_date }} {{ $entry->entry_time }}</p>
+                                <p><strong>Dibuat Oleh:</strong> {{ $entry->createdBy->name ?? '-' }}</p>
+                                <p><strong>Supervisor:</strong> {{ $entry->supervisor->name ?? '-' }}</p>
+                                <p><strong>Kompetensi:</strong> {{ $entry->competence_level ?? '-' }}</p>
+                                <p><strong>Status Asuransi:</strong> {{ $entry->insurance_status ?? '-' }}</p>
+                                <p><strong>Catatan Asuransi:</strong> {{ $entry->insurance_notes ?? '-' }}</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <p><strong>Kode Entry:</strong> {{ $entry->entry_key }}</p>
-                        <p><strong>Deskripsi:</strong> {{ $entry->entry_description }}</p>
-                        <p><strong>Tanggal:</strong> {{ $entry->entry_date }} {{ $entry->entry_time }}</p>
-                        <p><strong>Dibuat Oleh:</strong> {{ $entry->createdBy->name ?? '-' }}</p>
+
+                    <!-- Operation Info -->
+                    <div class="tab-pane fade" id="operation" role="tabpanel">
+                        <div class="card">
+                            <div class="card-body">
+                                <p><strong>Tanggal Operasi:</strong> {{ $entry->surgical_date_id }}</p>
+                                <p><strong>Jam Mulai:</strong> {{ $entry->surgery_start_time }}</p>
+                                <p><strong>Jam Selesai:</strong> {{ $entry->surgery_end_time }}</p>
+                                <p><strong>Operator 1:</strong> {{ $entry->operator1->name ?? '-' }}</p>
+                                <p><strong>Operator 2:</strong> {{ $entry->operator2->name ?? '-' }}</p>
+                                <p><strong>Operator 3:</strong> {{ $entry->operator3->name ?? '-' }}</p>
+                                <p><strong>Operator 4:</strong> {{ $entry->operator4->name ?? '-' }}</p>
+                                <p><strong>Diagnosis Pre-Operatif:</strong> {{ $entry->preoperative_diagnosis }}</p>
+                                <p><strong>Diagnosis Intra-Operatif:</strong> {{ $entry->intraoperative_diagnosis }}</p>
+                                <p><strong>Tindakan:</strong> {{ $entry->surgical_procedure }}</p>
+                                <p><strong>Perkiraan Kehilangan Darah:</strong> {{ $entry->estimated_blood_loss }} ml</p>
+                                <p><strong>Catatan:</strong> {{ $entry->surgical_notes }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Waitlist Info -->
+                    <div class="tab-pane fade" id="waitlist" role="tabpanel">
+                        <div class="card">
+                            <div class="card-body">
+                                <p><strong>Status:</strong> {{ $entry->waitlist_status ?? '-' }}</p>
+                                <p><strong>Tanggal Masuk:</strong> {{ $entry->waitlist_entry_date ?? '-' }}</p>
+                                <p><strong>Group:</strong> {{ $entry->waitlist_group ?? '-' }}</p>
+                                <p><strong>Tipe:</strong> {{ $entry->waitlist_type ?? '-' }}</p>
+                                <p><strong>Durasi:</strong> {{ $entry->waitlist_duration ?? '-' }}</p>
+                                <p><strong>Planned Procedure:</strong> {{ $entry->waitlist_planned_procedure ?? '-' }}</p>
+                                <p><strong>Operator:</strong> {{ $entry->waitlistOperator->name ?? '-' }}</p>
+                                <p><strong>Scheduling Status:</strong> {{ $entry->waitlist_scheduling_status ?? '-' }}</p>
+                                <p><strong>Tanggal Dijadwalkan:</strong> {{ $entry->waitlist_scheduled_date ?? '-' }}</p>
+                                <p><strong>Ruang Operasi:</strong> {{ $entry->waitlist_operating_room ?? '-' }}</p>
+                                <p><strong>Round:</strong> {{ $entry->waitlist_surgery_round ?? '-' }}</p>
+                                <p><strong>Tanggal Selesai:</strong> {{ $entry->waitlist_completed_date ?? '-' }}</p>
+                                <p><strong>Alasan Selesai:</strong> {{ $entry->waitlist_completion_reason ?? '-' }}</p>
+                                <p><strong>Catatan Selesai:</strong> {{ $entry->waitlist_completion_notes ?? '-' }}</p>
+                                <p><strong>Tanggal Ditunda:</strong> {{ $entry->waitlist_suspended_date ?? '-' }}</p>
+                                <p><strong>Alasan Ditunda:</strong> {{ $entry->waitlist_suspended_reason ?? '-' }}</p>
+                                <p><strong>Catatan Penundaan:</strong> {{ $entry->waitlist_suspended_notes ?? '-' }}</p>
+                                <p><strong>Log Komunikasi:</strong> {{ $entry->waitlist_communication_log ?? '-' }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Attachments -->
+                    <div class="tab-pane fade" id="attachments" role="tabpanel">
+                        <div class="card">
+                            <div class="card-body">
+                                @if ($entry->log_image_files)
+                                    <p><strong>Gambar:</strong></p>
+                                    @foreach (json_decode($entry->log_image_files, true) as $img)
+                                        <img src="{{ asset($img) }}" class="img-thumbnail me-2 mb-2" width="150">
+                                    @endforeach
+                                @endif
+
+                                @if ($entry->log_document_files)
+                                    <p><strong>Dokumen:</strong></p>
+                                    <ul>
+                                        @foreach (json_decode($entry->log_document_files, true) as $doc)
+                                            <li><a href="{{ asset($doc) }}" target="_blank">{{ basename($doc) }}</a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                @endif
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="card mb-3">
-                    <div class="card-header">Operator & Supervisor</div>
-                    <div class="card-body">
-                        <p><strong>Operator 1:</strong> {{ $entry->operator1->name ?? '-' }}</p>
-                        <p><strong>Operator 2:</strong> {{ $entry->operator2->name ?? '-' }}</p>
-                        <p><strong>Operator 3:</strong> {{ $entry->operator3->name ?? '-' }}</p>
-                        <p><strong>Operator 4:</strong> {{ $entry->operator4->name ?? '-' }}</p>
-                        <p><strong>Supervisor:</strong> {{ $entry->supervisor->name ?? '-' }}</p>
-                    </div>
-                </div>
-
-                <div class="card mb-3">
-                    <div class="card-header">Informasi Operasi</div>
-                    <div class="card-body">
-                        <p><strong>Tanggal Operasi:</strong> {{ $entry->surgical_date_id }}</p>
-                        <p><strong>Jam Mulai:</strong> {{ $entry->surgery_start_time }}</p>
-                        <p><strong>Jam Selesai:</strong> {{ $entry->surgery_end_time }}</p>
-                        <p><strong>Diagnosis Pre-Operatif:</strong> {{ $entry->preoperative_diagnosis }}</p>
-                        <p><strong>Diagnosis Intra-Operatif:</strong> {{ $entry->intraoperative_diagnosis }}</p>
-                        <p><strong>Tindakan:</strong> {{ $entry->surgical_procedure }}</p>
-                        <p><strong>Perkiraan Kehilangan Darah:</strong> {{ $entry->estimated_blood_loss }} ml</p>
-                        <p><strong>Catatan:</strong> {{ $entry->surgical_notes }}</p>
-                    </div>
-                </div>
-
-                <div class="card mb-3">
-                    <div class="card-header">Lampiran</div>
-                    <div class="card-body">
-                        @if ($entry->log_image_files)
-                            <p><strong>Gambar:</strong></p>
-                            @foreach (json_decode($entry->log_image_files, true) as $img)
-                                <img src="{{ asset($img) }}" alt="img" class="img-thumbnail me-2 mb-2"
-                                    width="150">
-                            @endforeach
-                        @endif
-
-                        @if ($entry->log_document_files)
-                            <p><strong>Dokumen:</strong></p>
-                            <ul>
-                                @foreach (json_decode($entry->log_document_files, true) as $doc)
-                                    <li><a href="{{ asset($doc) }}" target="_blank">{{ basename($doc) }}</a></li>
-                                @endforeach
-                            </ul>
-                        @endif
-                    </div>
-                </div>
-
-                <a href="{{ route('entries.index') }}" class="btn btn-secondary">Kembali</a>
+                <a href="{{ route('entries.index') }}" class="btn btn-secondary mt-3">Kembali</a>
             </div>
         </div>
     </section>
