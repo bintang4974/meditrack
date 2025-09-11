@@ -16,7 +16,26 @@
         <div class="row">
             <div class="col-lg-12">
                 <h3>Daftar Project Saya</h3>
+
                 <a href="{{ route('projects.create') }}" class="btn btn-primary mb-3">Buat Project Baru</a>
+
+                <div class="row">
+                    @foreach ($projects as $project)
+                        <div class="col-md-4">
+                            <div class="card mb-3 shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ $project->name }}</h5>
+                                    <p class="card-text">{{ $project->description }}</p>
+                                    <span class="badge bg-secondary">Kode: {{ $project->voucher_code }}</span>
+                                    <div class="mt-2">
+                                        <a href="{{ route('projects.show', $project->id) }}"
+                                            class="btn btn-primary btn-sm">Masuk Project</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
 
                 <form action="{{ route('projects.join') }}" method="POST" class="mb-3">
                     @csrf
@@ -27,14 +46,14 @@
                     </div>
                 </form>
 
-                <ul class="list-group">
+                {{-- <ul class="list-group">
                     @foreach ($projects as $project)
                         <li class="list-group-item d-flex justify-content-between">
                             {{ $project->name }}
                             <span class="badge bg-secondary">Kode: {{ $project->voucher_code }}</span>
                         </li>
                     @endforeach
-                </ul>
+                </ul> --}}
             </div>
         </div>
     </section>

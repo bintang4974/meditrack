@@ -49,4 +49,9 @@ class Entry extends Model
     {
         return $this->hasMany(Metadata::class);
     }
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class, 'project_key', 'voucher_code');
+    }
 }

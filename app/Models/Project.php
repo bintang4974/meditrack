@@ -24,4 +24,9 @@ class Project extends Model
     {
         return $this->hasMany(Template::class);
     }
+
+    public function entries()
+    {
+        return $this->hasMany(Entry::class, 'project_id');
+    }
 }

@@ -16,10 +16,11 @@ Auth::routes();
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
-    Route::get('/projects/create', [ProjectController::class, 'create'])->name('projects.create');
-    Route::post('/projects', [ProjectController::class, 'store'])->name('projects.store');
+    // Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
+    // Route::get('/projects/create', [ProjectController::class, 'create'])->name('projects.create');
+    // Route::post('/projects', [ProjectController::class, 'store'])->name('projects.store');
     Route::post('/projects/join', [ProjectController::class, 'join'])->name('projects.join');
+    Route::resource('projects', ProjectController::class);
 
     Route::resource('entries', EntryController::class)->only(['index','create','store','show']);
 });
