@@ -46,6 +46,25 @@ class ProjectController extends Controller
         return redirect()->route('projects.index')->with('success', 'Project berhasil dibuat!');
     }
 
+    public function show($id)
+    {
+        $pageTitle = 'Project';
+        $project = Project::with(['site', 'users', 'entries.category', 'entries.createdBy'])
+            ->findOrFail($id);
+
+        if (!auth()->user()->projects->contains($id)) {
+            abort(403, 'Anda tidak memiliki akses ke project ini');
+        }
+
+        // entries sudah eager-loaded -> ambil sebagai Collection dan sort (opsional)
+        $entries = $project->entries->sortByDesc('created_at');
+
+        // anggota project
+        $members = $project->users;
+
+        return view('projects.show', compact('project', 'entries', 'members', 'pageTitle'));
+    }
+
     public function join(Request $request)
     {
         $request->validate([

@@ -49,4 +49,14 @@ class Entry extends Model
     {
         return $this->hasMany(Metadata::class);
     }
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
+    }
+
+    public function patient()
+    {
+        return $this->belongsTo(Patient::class);
+    }
 }

@@ -15,13 +15,19 @@ class Project extends Model
             ->withTimestamps();
     }
 
-    public function sites()
+    // 🔥 FIX: Project belongsTo Site
+    public function site()
     {
-        return $this->hasMany(Site::class);
+        return $this->belongsTo(Site::class);
     }
 
     public function templates()
     {
         return $this->hasMany(Template::class);
+    }
+
+    public function entries()
+    {
+        return $this->hasMany(Entry::class, 'project_id');
     }
 }

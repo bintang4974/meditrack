@@ -140,13 +140,13 @@
                 </a>
             </li><!-- End Dashboard Nav -->
 
-            <li class="nav-item">
+            {{-- <li class="nav-item">
                 <a class="nav-link {{ request()->is('entries') ? 'active' : 'collapsed' }}"
                     href="{{ route('entries.index') }}">
                     <i class="bi bi-grid"></i>
                     <span>Entry</span>
                 </a>
-            </li><!-- End Dashboard Nav -->
+            </li><!-- End Dashboard Nav --> --}}
 
             <li class="nav-item">
                 <a class="nav-link collapsed" data-bs-target="#charts-nav" data-bs-toggle="collapse" href="#">
@@ -226,6 +226,7 @@
     <!-- Template Main JS File -->
     <script src="{{ asset('template') }}/assets/js/main.js"></script>
 
+    @stack('scripts')
 </body>
 
 </html>

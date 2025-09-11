@@ -2,6 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Models\Doctor;
+use App\Models\Entry;
+use App\Models\Patient;
+use App\Models\Project;
+use App\Models\Site;
+use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
@@ -16,10 +23,11 @@ class ProjectSeeder extends Seeder
     {
         DB::table('projects')->insert([
             [
-                'name' => 'General Surgery Residency Program',
-                'description' => 'Logbook project for surgical residents.',
-                'voucher_code' => 'SURG-2025',
-                'owner_id' => 2, // Dr. Birama
+                'site_id' => 1,
+                'name' => 'Project RSUD Surabaya',
+                'description' => 'Logbook project untuk RSUD Surabaya',
+                'voucher_code' => 'PRJAAA0001',
+                'owner_id' => 1, // user Admin
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]

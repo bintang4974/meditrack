@@ -15,8 +15,8 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserSeeder::class,
-            ProjectSeeder::class,
             SiteSeeder::class,
+            ProjectSeeder::class,
             DoctorSeeder::class,
             PatientSeeder::class,
             EncounterSeeder::class,
@@ -24,6 +24,8 @@ class DatabaseSeeder extends Seeder
             UserProjectSeeder::class,
             EntrySeeder::class,
         ]);
+
+        // $this->call(ProjectSeeder::class);
 
         // User::factory(10)->create();
 

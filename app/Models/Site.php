@@ -8,9 +8,10 @@ class Site extends Model
 {
     protected $guarded = [];
 
-    public function project()
+    // 🔥 FIX: Site hasMany Projects
+    public function projects()
     {
-        return $this->belongsTo(Project::class);
+        return $this->hasMany(Project::class);
     }
 
     public function doctors()
