@@ -1,5 +1,24 @@
 <div class="mb-3">
     <label>Status</label>
+    <select name="waitlist_status" class="form-control">
+        <option value="ACTIVE">Active</option>
+        <option value="SCHEDULED">Scheduled</option>
+        <option value="COMPLETED">Completed</option>
+        <option value="SUSPENDED">Suspended</option>
+    </select>
+</div>
+<div class="mb-3">
+    <label>Tanggal Masuk Waitlist</label>
+    <input type="date" name="waitlist_entry_date" class="form-control">
+</div>
+<div class="mb-3">
+    <label>Planned Procedure</label>
+    <input type="text" name="waitlist_planned_procedure" class="form-control">
+</div>
+
+
+{{-- <div class="mb-3">
+    <label>Status</label>
     <select name="waitlist_status" id="waitlist_status" class="form-control">
         <option value="">-- Pilih Status --</option>
         <option value="ACTIVE">ACTIVE</option>
@@ -56,4 +75,4 @@
             }
         });
     </script>
-@endpush
+@endpush --}}

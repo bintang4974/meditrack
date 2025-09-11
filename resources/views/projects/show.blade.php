@@ -5,9 +5,8 @@
         <h1>{{ $pageTitle }}</h1>
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                <li class="breadcrumb-item">Tables</li>
-                <li class="breadcrumb-item active">Data</li>
+                <li class="breadcrumb-item"><a href="{{ route('projects.index') }}">Home</a></li>
+                <li class="breadcrumb-item active">{{ $project->name }}</li>
             </ol>
         </nav>
     </div><!-- End Page Title -->
@@ -15,10 +14,28 @@
     <section class="section">
         <div class="row">
             <div class="col-lg-12">
+
                 <h3>{{ $project->name }}</h3>
                 <p>{{ $project->description }}</p>
                 <p><strong>Kode Voucher:</strong> {{ $project->voucher_code }}</p>
 
+                <hr>
+
+                <h4>Rumah Sakit</h4>
+                <p>{{ $project->site->name }} - {{ $project->site->location }}</p>
+
+                <hr>
+
+                <h4>Anggota Project</h4>
+                <ul>
+                    @foreach ($members as $member)
+                        <li>{{ $member->name }} ({{ $member->pivot->role_in_project }})</li>
+                    @endforeach
+                </ul>
+
+                <hr>
+
+                <h4>Entries</h4>
                 <div class="card">
                     <div class="card-body">
                         <div class="card-title">
@@ -62,6 +79,7 @@
                         <!-- End Table with stripped rows -->
                     </div>
                 </div>
+
             </div>
         </div>
     </section>

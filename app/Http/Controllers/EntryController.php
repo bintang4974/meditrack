@@ -29,9 +29,9 @@ class EntryController extends Controller
     {
         $pageTitle = 'Create Entry';
         $categories = Category::all();
-        // ambil semua pasien dari site dalam project ini
-        $patients = Patient::whereIn('site_id', $project->sites->pluck('id'))->get();
-        // $projectId = $request->get('project');
+        // ambil pasien dari site dalam project ini
+        $patients = Patient::where('site_id', $project->site_id)->get();
+
         return view('entry.create', compact('categories', 'project', 'pageTitle', 'patients'));
     }
 

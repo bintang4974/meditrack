@@ -8,12 +8,12 @@
     @include('entry.forms._medical')
 @endif
 
-{{-- Overlap fields (Surgical Care & Medical Care) --}}
+{{-- Common fields untuk keduanya --}}
 @if (in_array($category->category_main, ['Surgical Care', 'Medical Care']))
     @include('entry.forms._common')
 @endif
 
-{{-- Surgical Waitlist Tracking --}}
+{{-- Waitlist --}}
 @if ($category->category_sub === 'Surgical Waitlist Tracking')
     @include('entry.forms._waitlist')
 @endif

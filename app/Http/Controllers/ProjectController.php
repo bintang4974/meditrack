@@ -49,16 +49,20 @@ class ProjectController extends Controller
     public function show($id)
     {
         $pageTitle = 'Project';
-        $project = Project::with(['users', 'sites'])->findOrFail($id);
+        $project = Project::with(['site', 'users', 'entries.category', 'entries.createdBy'])
+            ->findOrFail($id);
 
-        // hanya user yang join bisa akses
         if (!auth()->user()->projects->contains($id)) {
             abort(403, 'Anda tidak memiliki akses ke project ini');
         }
 
-        $entries = $project->entries()->with('category','createdBy')->latest()->get();
+        // entries sudah eager-loaded -> ambil sebagai Collection dan sort (opsional)
+        $entries = $project->entries->sortByDesc('created_at');
 
-        return view('projects.show', compact('project', 'entries', 'pageTitle'));
+        // anggota project
+        $members = $project->users;
+
+        return view('projects.show', compact('project', 'entries', 'members', 'pageTitle'));
     }
 
     public function join(Request $request)
