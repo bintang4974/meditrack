@@ -17,8 +17,21 @@
             <div class="col-lg-12">
                 <h3>{{ $pageTitle }} (Project: {{ $project->name }})</h3>
 
-                <form action="{{ route('entries.store', $project->id) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('projects.entries.store', $project->id) }}" method="POST"
+                    enctype="multipart/form-data">
                     @csrf
+
+                    <div class="mb-3">
+                        <label for="patient_id">Pasien</label>
+                        <select id="patient_id" name="patient_id" class="form-control" required>
+                            <option value="">-- Pilih Pasien --</option>
+                            @foreach ($patients as $p)
+                                <option value="{{ $p->id }}">
+                                    {{ $p->rekam_medis }} - {{ $p->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
                     <div class="mb-3">
                         <label for="category_id">Kategori</label>
@@ -49,7 +62,7 @@
             let catId = this.value;
             if (!catId) return;
 
-            fetch(`/entries/form-fields/${catId}`)
+            fetch(`{{ url('/entries/form-fields') }}/${catId}`)
                 .then(res => {
                     if (!res.ok) throw new Error("HTTP status " + res.status);
                     return res.text();

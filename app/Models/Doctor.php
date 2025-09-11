@@ -18,5 +18,23 @@ class Doctor extends Model
         return $this->hasMany(Entry::class, 'operator_1');
     }
 
-    // bisa ditambahkan untuk operator_2,3,4
+    public function entriesAsOperator2()
+    {
+        return $this->hasMany(Entry::class, 'operator_2');
+    }
+
+    public function entriesAsOperator3()
+    {
+        return $this->hasMany(Entry::class, 'operator_3');
+    }
+
+    public function entriesAsOperator4()
+    {
+        return $this->hasMany(Entry::class, 'operator_4');
+    }
+
+    public function entriesAsSupervisor()
+    {
+        return $this->hasMany(Entry::class, 'entry_supervisor');
+    }
 }

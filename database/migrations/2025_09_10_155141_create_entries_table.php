@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             // Relasi ke Project
             $table->foreignId('project_id')->constrained('projects')->cascadeOnDelete();
+            $table->foreignId('patient_id')->constrained('patients')->cascadeOnDelete();
 
             // Kalau masih perlu menyimpan kode unik seperti voucher
             $table->string('entry_key')->unique();
