@@ -226,6 +226,7 @@
     <!-- Template Main JS File -->
     <script src="{{ asset('template') }}/assets/js/main.js"></script>
 
+    @stack('scripts')
 </body>
 
 </html>

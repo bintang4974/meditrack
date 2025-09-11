@@ -23,6 +23,8 @@
                     Tambah Entry Aktivitas
                 </a>
 
+                <a href="{{ route('projects.entries.create', $project->id) }}" class="btn btn-primary">+ Tambah Entry</a>
+
                 <h4>Entries</h4>
                 <table class="table table-bordered">
                     <thead>

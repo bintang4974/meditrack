@@ -13,22 +13,22 @@ class Entry extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function operator1()
-    {
-        return $this->belongsTo(Doctor::class, 'operator_1');
-    }
-    public function operator2()
-    {
-        return $this->belongsTo(Doctor::class, 'operator_2');
-    }
-    public function operator3()
-    {
-        return $this->belongsTo(Doctor::class, 'operator_3');
-    }
-    public function operator4()
-    {
-        return $this->belongsTo(Doctor::class, 'operator_4');
-    }
+    // public function operator1()
+    // {
+    //     return $this->belongsTo(Doctor::class, 'operator_1');
+    // }
+    // public function operator2()
+    // {
+    //     return $this->belongsTo(Doctor::class, 'operator_2');
+    // }
+    // public function operator3()
+    // {
+    //     return $this->belongsTo(Doctor::class, 'operator_3');
+    // }
+    // public function operator4()
+    // {
+    //     return $this->belongsTo(Doctor::class, 'operator_4');
+    // }
 
     public function encounter()
     {
@@ -52,6 +52,6 @@ class Entry extends Model
 
     public function project()
     {
-        return $this->belongsTo(Project::class, 'project_key', 'voucher_code');
+        return $this->belongsTo(Project::class);
     }
 }
