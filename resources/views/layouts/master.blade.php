@@ -160,6 +160,14 @@
                 </a>
             </li><!-- End Dashboard Nav -->
 
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('doctors') ? 'active' : 'collapsed' }}"
+                    href="{{ route('doctors.index') }}">
+                    <i class="bi bi-person-heart"></i>
+                    <span>Doctor</span>
+                </a>
+            </li><!-- End Dashboard Nav -->
+
             {{-- <li class="nav-item">
                 <a class="nav-link {{ request()->is('entries') ? 'active' : 'collapsed' }}"
                     href="{{ route('entries.index') }}">
