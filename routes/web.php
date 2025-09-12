@@ -2,7 +2,8 @@
 
 use App\Http\Controllers\{
     CategoryController, 
-    DashboardController, 
+    DashboardController,
+    DoctorController,
     EntryController,
     PatientController,
     ProjectController, 
@@ -35,4 +36,5 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('sites', SiteController::class)->except(['show']);
     Route::resource('categories', CategoryController::class)->except(['show']);
     Route::resource('patients', PatientController::class)->except(['show']);
+    Route::resource('doctors', DoctorController::class);
 });
