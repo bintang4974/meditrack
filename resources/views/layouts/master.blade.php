@@ -103,10 +103,6 @@
                                     <span>Sign Out</span>
                                 </button>
                             </form>
-                            {{-- <a class="dropdown-item d-flex align-items-center" href="{{ route('logout') }}">
-                                <i class="bi bi-box-arrow-right"></i>
-                                <span>Sign Out</span>
-                            </a> --}}
                         </li>
 
                     </ul><!-- End Profile Dropdown Items -->
@@ -135,8 +131,16 @@
             <li class="nav-item">
                 <a class="nav-link {{ request()->is('projects') ? 'active' : 'collapsed' }}"
                     href="{{ route('projects.index') }}">
-                    <i class="bi bi-grid"></i>
+                    <i class="bi bi-kanban"></i>
                     <span>Project</span>
+                </a>
+            </li><!-- End Dashboard Nav -->
+
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('sites') ? 'active' : 'collapsed' }}"
+                    href="{{ route('sites.index') }}">
+                    <i class="bi bi-hospital"></i>
+                    <span>Site</span>
                 </a>
             </li><!-- End Dashboard Nav -->
 
