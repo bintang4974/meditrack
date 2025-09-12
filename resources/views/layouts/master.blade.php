@@ -144,6 +144,14 @@
                 </a>
             </li><!-- End Dashboard Nav -->
 
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('categories') ? 'active' : 'collapsed' }}"
+                    href="{{ route('categories.index') }}">
+                    <i class="bi bi-grid"></i>
+                    <span>Category</span>
+                </a>
+            </li><!-- End Dashboard Nav -->
+
             {{-- <li class="nav-item">
                 <a class="nav-link {{ request()->is('entries') ? 'active' : 'collapsed' }}"
                     href="{{ route('entries.index') }}">
