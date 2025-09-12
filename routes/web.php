@@ -1,6 +1,12 @@
 <?php
 
-use App\Http\Controllers\{DashboardController, EntryController, ProjectController, SiteController};
+use App\Http\Controllers\{
+    CategoryController, 
+    DashboardController, 
+    EntryController, 
+    ProjectController, 
+    SiteController
+};
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/', function () {
@@ -26,4 +32,5 @@ Route::middleware(['auth'])->group(function () {
     // ajax form field loader
     Route::get('/entries/form-fields/{category}', [EntryController::class, 'formFields'])->name('entries.formFields');
     Route::resource('sites', SiteController::class)->except(['show']);
+    Route::resource('categories', CategoryController::class)->except(['show']);
 });

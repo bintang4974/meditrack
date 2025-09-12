@@ -12,4 +12,9 @@ class Category extends Model
     {
         return $this->hasMany(Entry::class);
     }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 }
