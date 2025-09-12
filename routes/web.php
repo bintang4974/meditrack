@@ -3,7 +3,8 @@
 use App\Http\Controllers\{
     CategoryController, 
     DashboardController, 
-    EntryController, 
+    EntryController,
+    PatientController,
     ProjectController, 
     SiteController
 };
@@ -33,4 +34,5 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/entries/form-fields/{category}', [EntryController::class, 'formFields'])->name('entries.formFields');
     Route::resource('sites', SiteController::class)->except(['show']);
     Route::resource('categories', CategoryController::class)->except(['show']);
+    Route::resource('patients', PatientController::class)->except(['show']);
 });

@@ -152,6 +152,14 @@
                 </a>
             </li><!-- End Dashboard Nav -->
 
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('patients') ? 'active' : 'collapsed' }}"
+                    href="{{ route('patients.index') }}">
+                    <i class="bi bi-person-lines-fill"></i>
+                    <span>Patient</span>
+                </a>
+            </li><!-- End Dashboard Nav -->
+
             {{-- <li class="nav-item">
                 <a class="nav-link {{ request()->is('entries') ? 'active' : 'collapsed' }}"
                     href="{{ route('entries.index') }}">
