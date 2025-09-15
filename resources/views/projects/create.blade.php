@@ -13,21 +13,38 @@
     </div><!-- End Page Title -->
 
     <section class="section">
-        <div class="card">
-            <div class="card-body">
-                <form action="{{ route('projects.store') }}" method="POST">
-                    @csrf
-                    <div class="mb-3">
-                        <label for="name">Nama Project</label>
-                        <input type="text" class="form-control" name="name" required>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-title">
+                            <a href="{{ route('projects.index') }}" class="btn btn-secondary"><i
+                                    class="bi bi-skip-backward"></i> Kembali</a>
+                        </div>
+                        <!-- Vertical Form -->
+                        <form class="row g-3" action="{{ route('projects.store') }}" method="POST">
+                            @csrf
+                            <div class="col-12">
+                                <label for="name" class="form-label">Nama</label>
+                                <input type="text" name="name" class="form-control" id="name">
+                                @error('name')
+                                    <div class="text-danger"><small>{{ $message }}</small></div>
+                                @enderror
+                            </div>
+                            <div class="col-12">
+                                <label for="description" class="form-label">Deskripsi</label>
+                                <textarea name="description" class="form-control" id="description" cols="30" rows="10"></textarea>
+                                @error('description')
+                                    <div class="text-danger"><small>{{ $message }}</small></div>
+                                @enderror
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary"><i class="bi bi-floppy"></i> Submit</button>
+                                <button type="reset" class="btn btn-danger"><i class="bi bi-x-octagon"></i> Reset</button>
+                            </div>
+                        </form><!-- Vertical Form -->
                     </div>
-                    <div class="mb-3">
-                        <label for="description">Deskripsi</label>
-                        <textarea class="form-control" name="description"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-success">Simpan</button>
-                </form>
+                </div>
             </div>
-        </div>
     </section>
 @endsection

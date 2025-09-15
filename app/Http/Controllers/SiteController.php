@@ -51,7 +51,7 @@ class SiteController extends Controller
      */
     public function show(Project $project, Site $site)
     {
-        $pageTitle = "Detail Rumah Sakit";
+        $pageTitle = "Detail Pasien Rumah Sakit";
         $site->load('patients');
         return view('sites.show', compact('project', 'site', 'pageTitle'));
     }
