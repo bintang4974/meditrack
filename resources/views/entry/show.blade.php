@@ -5,17 +5,41 @@
         <h1>{{ $pageTitle }}</h1>
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                <li class="breadcrumb-item">Tables</li>
-                <li class="breadcrumb-item active">Data</li>
+                <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a
+                        href="{{ route('patients.show', ['project' => $project->id, 'site' => $site->id, 'patient' => $patient->id]) }}">Pasien</a>
+                </li>
+                <li class="breadcrumb-item active">Detail Entry</li>
             </ol>
         </nav>
-    </div><!-- End Page Title -->
+    </div>
 
     <section class="section">
         <div class="row">
             <div class="col-lg-12">
-                <h3>Detail Entry</h3>
+
+                <!-- Info Header -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h4 class="card-title">Detail Entry</h4>
+                        <p><strong>Kode Entry:</strong> {{ $entry->entry_key }}</p>
+                        <p><strong>Kategori:</strong> {{ $entry->category->category_main }} -
+                            {{ $entry->category->category_sub }}</p>
+                        <p><strong>Label:</strong> {{ $entry->entry_label ?? '-' }}</p>
+                        <p><strong>Tanggal:</strong> {{ $entry->entry_date }} {{ $entry->entry_time }}</p>
+                    </div>
+                    <div class="card-footer text-muted d-flex justify-content-between">
+                        <div>
+                            <small>Dibuat oleh: <b>{{ $entry->createdBy->name ?? '-' }}</b></small><br>
+                            <small>Tgl. Buat: {{ $entry->created_at->format('M d, Y H:i:s') }}</small>
+                        </div>
+                        <div class="text-end">
+                            <small>Update oleh:
+                                <b>{{ optional(App\Models\User::find($entry->last_modified_by))->name ?? '-' }}</b></small><br>
+                            <small>Tgl. Update: {{ $entry->updated_at->format('M d, Y H:i:s') }}</small>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Tabs -->
                 <ul class="nav nav-tabs" id="entryTabs" role="tablist">
@@ -42,12 +66,7 @@
                     <div class="tab-pane fade show active" id="general" role="tabpanel">
                         <div class="card">
                             <div class="card-body">
-                                <p><strong>Kode Entry:</strong> {{ $entry->entry_key }}</p>
-                                <p><strong>Kategori:</strong> {{ $entry->category->category_main }} -
-                                    {{ $entry->category->category_sub }}</p>
-                                <p><strong>Deskripsi:</strong> {{ $entry->entry_description }}</p>
-                                <p><strong>Tanggal:</strong> {{ $entry->entry_date }} {{ $entry->entry_time }}</p>
-                                <p><strong>Dibuat Oleh:</strong> {{ $entry->createdBy->name ?? '-' }}</p>
+                                <p><strong>Deskripsi:</strong> {{ $entry->entry_description ?? '-' }}</p>
                                 <p><strong>Supervisor:</strong> {{ $entry->supervisor->name ?? '-' }}</p>
                                 <p><strong>Kompetensi:</strong> {{ $entry->competence_level ?? '-' }}</p>
                                 <p><strong>Status Asuransi:</strong> {{ $entry->insurance_status ?? '-' }}</p>
@@ -60,18 +79,20 @@
                     <div class="tab-pane fade" id="operation" role="tabpanel">
                         <div class="card">
                             <div class="card-body">
-                                <p><strong>Tanggal Operasi:</strong> {{ $entry->surgical_date_id }}</p>
-                                <p><strong>Jam Mulai:</strong> {{ $entry->surgery_start_time }}</p>
-                                <p><strong>Jam Selesai:</strong> {{ $entry->surgery_end_time }}</p>
+                                <p><strong>Tanggal Operasi:</strong> {{ $entry->surgical_date_id ?? '-' }}</p>
+                                <p><strong>Jam Mulai:</strong> {{ $entry->surgery_start_time ?? '-' }}</p>
+                                <p><strong>Jam Selesai:</strong> {{ $entry->surgery_end_time ?? '-' }}</p>
                                 <p><strong>Operator 1:</strong> {{ $entry->operator1->name ?? '-' }}</p>
                                 <p><strong>Operator 2:</strong> {{ $entry->operator2->name ?? '-' }}</p>
                                 <p><strong>Operator 3:</strong> {{ $entry->operator3->name ?? '-' }}</p>
                                 <p><strong>Operator 4:</strong> {{ $entry->operator4->name ?? '-' }}</p>
-                                <p><strong>Diagnosis Pre-Operatif:</strong> {{ $entry->preoperative_diagnosis }}</p>
-                                <p><strong>Diagnosis Intra-Operatif:</strong> {{ $entry->intraoperative_diagnosis }}</p>
-                                <p><strong>Tindakan:</strong> {{ $entry->surgical_procedure }}</p>
-                                <p><strong>Perkiraan Kehilangan Darah:</strong> {{ $entry->estimated_blood_loss }} ml</p>
-                                <p><strong>Catatan:</strong> {{ $entry->surgical_notes }}</p>
+                                <p><strong>Diagnosis Pre-Operatif:</strong> {{ $entry->preoperative_diagnosis ?? '-' }}</p>
+                                <p><strong>Diagnosis Intra-Operatif:</strong> {{ $entry->intraoperative_diagnosis ?? '-' }}
+                                </p>
+                                <p><strong>Tindakan:</strong> {{ $entry->surgical_procedure ?? '-' }}</p>
+                                <p><strong>Perkiraan Kehilangan Darah:</strong>
+                                    {{ $entry->estimated_blood_loss ? $entry->estimated_blood_loss . ' ml' : '-' }}</p>
+                                <p><strong>Catatan Operasi:</strong> {{ $entry->surgical_notes ?? '-' }}</p>
                             </div>
                         </div>
                     </div>
@@ -108,18 +129,20 @@
                             <div class="card-body">
                                 @if ($entry->log_image_files)
                                     <p><strong>Gambar:</strong></p>
-                                    @foreach (json_decode($entry->log_image_files, true) as $img)
-                                        <img src="{{ asset($img) }}" class="img-thumbnail me-2 mb-2" width="150">
-                                    @endforeach
+                                    <div class="d-flex flex-wrap">
+                                        {{-- @foreach (json_decode($entry->log_image_files, true) as $img)
+                                            <img src="{{ asset($img) }}" class="img-thumbnail me-2 mb-2" width="150">
+                                        @endforeach --}}
+                                    </div>
                                 @endif
 
                                 @if ($entry->log_document_files)
                                     <p><strong>Dokumen:</strong></p>
                                     <ul>
-                                        @foreach (json_decode($entry->log_document_files, true) as $doc)
+                                        {{-- @foreach (json_decode($entry->log_document_files, true) as $doc)
                                             <li><a href="{{ asset($doc) }}" target="_blank">{{ basename($doc) }}</a>
                                             </li>
-                                        @endforeach
+                                        @endforeach --}}
                                     </ul>
                                 @endif
                             </div>
@@ -127,7 +150,8 @@
                     </div>
                 </div>
 
-                <a href="{{ route('entries.index') }}" class="btn btn-secondary mt-3">Kembali</a>
+                <a href="{{ route('patients.show', ['project' => $project->id, 'site' => $site->id, 'patient' => $patient->id]) }}"
+                    class="btn btn-secondary mt-3">Kembali ke Pasien</a>
             </div>
         </div>
     </section>
