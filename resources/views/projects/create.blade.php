@@ -13,20 +13,19 @@
     </div><!-- End Page Title -->
 
     <section class="section">
-        <div class="row">
-            <div class="col-lg-12">
-                <h3>Buat Project Baru</h3>
+        <div class="card">
+            <div class="card-body">
                 <form action="{{ route('projects.store') }}" method="POST">
                     @csrf
                     <div class="mb-3">
-                        <label>Nama Project</label>
-                        <input type="text" name="name" class="form-control" required>
+                        <label for="name">Nama Project</label>
+                        <input type="text" class="form-control" name="name" required>
                     </div>
                     <div class="mb-3">
-                        <label>Deskripsi</label>
-                        <textarea name="description" class="form-control"></textarea>
+                        <label for="description">Deskripsi</label>
+                        <textarea class="form-control" name="description"></textarea>
                     </div>
-                    <button class="btn btn-primary">Simpan</button>
+                    <button type="submit" class="btn btn-success">Simpan</button>
                 </form>
             </div>
         </div>

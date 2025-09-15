@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
+use App\Models\UserProject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -27,56 +28,65 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string',
             'description' => 'nullable|string',
         ]);
 
-        $voucher = strtoupper(Str::random(8)); // generate kode voucher unik
-
         $project = Project::create([
+            'project_code' => 'PRJ' . strtoupper(Str::random(6)),
+            'voucher_code' => strtoupper(Str::random(8)),
             'name' => $request->name,
             'description' => $request->description,
-            'voucher_code' => $voucher,
             'owner_id' => Auth::id(),
         ]);
 
-        // otomatis owner jadi user_projects
-        Auth::user()->projects()->attach($project->id, ['role_in_project' => 'owner']);
+        // Tambahkan juga ke tabel pivot user_projects sebagai owner
+        UserProject::create([
+            'user_id' => Auth::id(),
+            'project_id' => $project->id,
+            'role_in_project' => 'owner'
+        ]);
 
-        return redirect()->route('projects.index')->with('success', 'Project berhasil dibuat!');
+        return redirect()->route('projects.index')->with('success', 'Project berhasil dibuat.');
     }
 
-    public function show($id)
+    public function show(Project $project)
     {
-        $pageTitle = 'Project';
-        $project = Project::with(['site', 'users', 'entries.category', 'entries.createdBy'])
-            ->findOrFail($id);
+        $pageTitle = "Detail Project";
+        $project->load('sites');
+        return view('projects.show', compact('project', 'pageTitle'));
+    }
 
-        if (!auth()->user()->projects->contains($id)) {
-            abort(403, 'Anda tidak memiliki akses ke project ini');
+    public function search(Request $request)
+    {
+        $pageTitle = "Cari Project";
+        $project = null;
+
+        if ($request->filled('project_code')) {
+            $project = Project::where('project_code', $request->project_code)->first();
         }
 
-        // entries sudah eager-loaded -> ambil sebagai Collection dan sort (opsional)
-        $entries = $project->entries->sortByDesc('created_at');
-
-        // anggota project
-        $members = $project->users;
-
-        return view('projects.show', compact('project', 'entries', 'members', 'pageTitle'));
+        return view('projects.search', compact('project', 'pageTitle'));
     }
 
-    public function join(Request $request)
+    public function join(Request $request, Project $project)
     {
         $request->validate([
-            'voucher_code' => 'required|string|exists:projects,voucher_code',
+            'voucher_code' => 'required|string',
         ]);
 
-        $project = Project::where('voucher_code', $request->voucher_code)->first();
+        if ($request->voucher_code !== $project->voucher_code) {
+            return back()->with('error', 'Voucher salah!');
+        }
 
-        Auth::user()->projects()->syncWithoutDetaching([
-            $project->id => ['role_in_project' => 'member']
+        UserProject::firstOrCreate([
+            'user_id' => Auth::id(),
+            'project_id' => $project->id,
+        ], [
+            'role_in_project' => 'viewer',
         ]);
 
-        return redirect()->route('projects.index')->with('success', 'Berhasil join project!');
+        return redirect()->route('projects.show', $project->id)
+            ->with('success', 'Berhasil bergabung ke project.');
     }
 }
