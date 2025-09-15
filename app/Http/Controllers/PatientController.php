@@ -56,16 +56,16 @@ class PatientController extends Controller
      */
     public function show(Project $project, Site $site, Patient $patient)
     {
-        $pageTitle = "Detail Pasien";
-        // Pastikan pasien belong to site
-        if ($patient->site_id !== $site->id) {
-            abort(404);
-        }
+        // ambil entries untuk pasien ini
+        $entries = $patient->entries()->with(['category', 'createdBy'])->get();
 
-        // Load entries pasien
-        $entries = $patient->entries()->with(['category', 'createdBy'])->latest()->get();
-
-        return view('patients.show', compact('pageTitle', 'project', 'site', 'patient', 'entries'));
+        return view('patients.show', [
+            'pageTitle' => 'Detail Pasien',
+            'project'   => $project,
+            'site'      => $site,
+            'patient'   => $patient,
+            'entries'   => $entries,
+        ]);
     }
 
     /**
