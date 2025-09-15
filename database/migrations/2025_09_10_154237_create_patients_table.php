@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('patients', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('site_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('site_id')->constrained()->cascadeOnDelete(); // ✅ relasi ke rumah sakit
             $table->string('rekam_medis');
             $table->string('name')->nullable();
             $table->date('dob')->nullable();

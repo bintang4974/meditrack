@@ -15,14 +15,14 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserSeeder::class,
-            SiteSeeder::class,
             ProjectSeeder::class,
-            DoctorSeeder::class,
-            PatientSeeder::class,
-            EncounterSeeder::class,
-            CategoriesSeeder::class,
+            SiteSeeder::class,
             UserProjectSeeder::class,
+            CategoriesSeeder::class,
+            PatientSeeder::class,
+            DoctorSeeder::class,
             EntrySeeder::class,
+            EncounterSeeder::class,
         ]);
 
         // $this->call(ProjectSeeder::class);
