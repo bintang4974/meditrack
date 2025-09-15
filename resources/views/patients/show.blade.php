@@ -5,17 +5,11 @@
         <h1>{{ $pageTitle }}</h1>
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                <li class="breadcrumb-item">Tables</li>
-                <li class="breadcrumb-item active">Data</li>
+                <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item active">Detail Pasien</li>
             </ol>
         </nav>
-    </div><!-- End Page Title -->
-
-    @if (session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
-
+    </div>
 
     <section class="section">
         <div class="row">
@@ -31,17 +25,23 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-8">
 
+            <div class="col-md-8">
                 <div class="card">
                     <div class="card-body">
                         <div class="card-title">
-                            <h4>Rekam Medik</h4>
-                            <a href="{{ route('projects.entries.create', $project->id) }}?patient_id={{ $patient->id }}"
-                                class="btn btn-primary mb-3"><i class="bi bi-bookmark-plus-fill"></i> Tambah Entry</a>
+                            <!-- Tambah Entry -->
+                            <a href="{{ route('entries.create', [
+                                'project' => $project->id,
+                                'site' => $site->id,
+                                'patient' => $patient->id,
+                            ]) }}"
+                                class="btn btn-primary mb-3">
+                                <i class="bi bi-bookmark-plus-fill"></i> Tambah Entry
+                            </a>
                         </div>
 
-                        <!-- Table with stripped rows -->
+                        <!-- Table entries -->
                         <table class="table datatable">
                             <thead>
                                 <tr>
@@ -63,18 +63,22 @@
                                         <td>{{ $entry->entry_date }}</td>
                                         <td>{{ $entry->createdBy->name ?? '-' }}</td>
                                         <td>
-                                            <a href="{{ route('entries.show', $entry->id) }}"
+                                            <a href="{{ route('entries.show', [
+                                                'project' => $project->id,
+                                                'site' => $site->id,
+                                                'patient' => $patient->id,
+                                                'entry' => $entry->id,
+                                            ]) }}"
                                                 class="btn btn-sm btn-info">Detail</a>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="text-center">Belum ada rekam medis</td>
+                                        <td colspan="6" class="text-center">Belum ada rekam medis</td>
                                     </tr>
                                 @endforelse
                             </tbody>
                         </table>
-                        <!-- End Table with stripped rows -->
                     </div>
                 </div>
             </div>

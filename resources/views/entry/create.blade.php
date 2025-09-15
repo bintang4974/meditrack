@@ -13,43 +13,53 @@
     </div><!-- End Page Title -->
 
     <section class="section">
-        <div class="row">
-            <div class="col-lg-12">
-                <h3>{{ $pageTitle }} (Project: {{ $project->name }})</h3>
-
-                <form action="{{ route('projects.entries.store', $project->id) }}" method="POST"
-                    enctype="multipart/form-data">
+        <div class="card">
+            <div class="card-body">
+                <form
+                    action="{{ route('entries.store', [
+                        'project' => $project->id,
+                        'site' => $site->id,
+                        'patient' => $patient->id,
+                    ]) }}"
+                    method="POST" enctype="multipart/form-data">
                     @csrf
-
-                    <div class="mb-3">
-                        <label for="patient_id">Pasien</label>
-                        <select id="patient_id" name="patient_id" class="form-control" required>
-                            <option value="">-- Pilih Pasien --</option>
-                            @foreach ($patients as $p)
-                                <option value="{{ $p->id }}">
-                                    {{ $p->rekam_medis }} - {{ $p->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
                     <div class="mb-3">
                         <label for="category_id">Kategori</label>
                         <select id="category_id" name="category_id" class="form-control" required>
                             <option value="">-- Pilih Kategori --</option>
                             @foreach ($categories as $cat)
-                                <option value="{{ $cat->id }}">
-                                    {{ $cat->category_main }} - {{ $cat->category_sub }}
+                                <option value="{{ $cat->id }}">{{ $cat->category_main }} - {{ $cat->category_sub }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
 
                     <div id="form-fields">
-                        <p class="text-muted">Silakan pilih kategori untuk menampilkan form.</p>
+                        <p class="text-muted">Silakan pilih kategori untuk menampilkan form tambahan.</p>
                     </div>
 
-                    <button type="submit" class="btn btn-primary mt-3">Simpan Entry</button>
+                    <div class="mb-3">
+                        <label for="entry_date">Tanggal Entry</label>
+                        <input type="date" name="entry_date" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="entry_label">Label</label>
+                        <input type="text" name="entry_label" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="entry_description">Deskripsi</label>
+                        <textarea name="entry_description" class="form-control"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Simpan</button>
+                    <a href="{{ route('patients.show', [
+                        'project' => $project->id,
+                        'site' => $site->id,
+                        'patient' => $patient->id,
+                    ]) }}"
+                        class="btn btn-secondary">Kembali</a>
                 </form>
             </div>
         </div>
@@ -63,15 +73,11 @@
             if (!catId) return;
 
             fetch(`{{ url('/entries/form-fields') }}/${catId}`)
-                .then(res => {
-                    if (!res.ok) throw new Error("HTTP status " + res.status);
-                    return res.text();
-                })
+                .then(res => res.text())
                 .then(html => {
                     document.getElementById('form-fields').innerHTML = html;
                 })
                 .catch(err => {
-                    console.error("Fetch error:", err);
                     document.getElementById('form-fields').innerHTML =
                         `<p class="text-danger">Gagal load form (${err.message})</p>`;
                 });
