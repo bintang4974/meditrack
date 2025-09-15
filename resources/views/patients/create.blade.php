@@ -13,53 +13,26 @@
     </div><!-- End Page Title -->
 
     <section class="section">
-        <div class="row">
-            <div class="col-lg-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Form Tambah</h5>
-                        <!-- Vertical Form -->
-                        <form class="row g-3" action="{{ route('patients.store') }}" method="POST">
-                            @csrf
-                            <div class="col12">
-                                <div class="form-floating mb-3">
-                                    <select name="site_id" class="form-select" id="floatingSelect" aria-label="State">
-                                        <option value="">-- Pilih Rumah Sakit --</option>
-                                        @foreach ($sites as $site)
-                                            <option value="{{ $site->id }}">{{ $site->name }}</option>
-                                        @endforeach
-                                    </select>
-                                    <label for="floatingSelect">Rumah Sakit</label>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <label for="rekam_medis" class="form-label">Rekam Medis</label>
-                                <input type="text" name="rekam_medis" class="form-control" id="rekam_medis">
-                                @error('rekam_medis')
-                                    <div class="text-danger"><small>{{ $message }}</small></div>
-                                @enderror
-                            </div>
-                            <div class="col-12">
-                                <label for="name" class="form-label">Nama</label>
-                                <input type="text" name="name" class="form-control" id="name">
-                                @error('name')
-                                    <div class="text-danger"><small>{{ $message }}</small></div>
-                                @enderror
-                            </div>
-                            <div class="col-12">
-                                <label for="dob" class="form-label">Tanggal lahir</label>
-                                <input type="date" name="dob" class="form-control" id="dob">
-                                @error('dob')
-                                    <div class="text-danger"><small>{{ $message }}</small></div>
-                                @enderror
-                            </div>
-                            <div class="text-center">
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                                <button type="reset" class="btn btn-secondary">Reset</button>
-                            </div>
-                        </form><!-- Vertical Form -->
-                    </div>
+    <div class="card">
+        <div class="card-body">
+            <form action="{{ route('patients.store', [$project->id, $site->id]) }}" method="POST">
+                @csrf
+                <div class="mb-3">
+                    <label>No. Rekam Medis</label>
+                    <input type="text" name="rekam_medis" class="form-control" required>
                 </div>
-            </div>
-    </section>
+                <div class="mb-3">
+                    <label>Nama Pasien</label>
+                    <input type="text" name="name" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label>Tanggal Lahir</label>
+                    <input type="date" name="dob" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-success">Simpan</button>
+                <a href="{{ route('sites.show', [$project->id, $site->id]) }}" class="btn btn-secondary">Kembali</a>
+            </form>
+        </div>
+    </div>
+</section>
 @endsection

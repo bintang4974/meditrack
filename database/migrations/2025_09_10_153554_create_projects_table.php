@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('site_id')->constrained()->cascadeOnDelete();
+            $table->string('project_code')->unique(); // kode unik project untuk search
+            $table->string('voucher_code')->unique(); // kode voucher untuk join
             $table->string('name');
             $table->text('description')->nullable();
-            $table->string('voucher_code')->unique();
             $table->foreignId('owner_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
         });

@@ -8,6 +8,7 @@ class Patient extends Model
 {
     protected $guarded = [];
 
+    // 🔹 Relasi ke site
     public function site()
     {
         return $this->belongsTo(Site::class);
@@ -18,6 +19,7 @@ class Patient extends Model
         return $this->hasMany(Encounter::class);
     }
 
+    // 🔹 Relasi ke entries (rekam medis pasien)
     public function entries()
     {
         return $this->hasMany(Entry::class);

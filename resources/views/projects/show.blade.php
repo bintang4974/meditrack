@@ -12,75 +12,38 @@
     </div><!-- End Page Title -->
 
     <section class="section">
-        <div class="row">
-            <div class="col-lg-12">
-
-                <h3>{{ $project->name }}</h3>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5>Deskripsi</h5>
                 <p>{{ $project->description }}</p>
-                <p><strong>Kode Voucher:</strong> {{ $project->voucher_code }}</p>
+                <p><strong>Kode:</strong> {{ $project->project_code }}</p>
+                <p><strong>Voucher:</strong> {{ $project->voucher_code }}</p>
+            </div>
+        </div>
 
-                <hr>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4>Daftar Rumah Sakit</h4>
+            <a href="{{ route('sites.create', $project->id) }}" class="btn btn-primary">+ Tambah Rumah Sakit</a>
+        </div>
 
-                <h4>Rumah Sakit</h4>
-                <p>{{ $project->site->name }} - {{ $project->site->location }}</p>
-
-                <hr>
-
-                <h4>Anggota Project</h4>
-                <ul>
-                    @foreach ($members as $member)
-                        <li>{{ $member->name }} ({{ $member->pivot->role_in_project }})</li>
-                    @endforeach
-                </ul>
-
-                <hr>
-
-                <h4>Entries</h4>
-                <div class="card">
-                    <div class="card-body">
-                        <div class="card-title">
-                            <a href="{{ route('projects.entries.create', $project->id) }}" class="btn btn-primary">+ Tambah
-                                Entry</a>
+        <div class="row">
+            @forelse($project->sites as $site)
+                <div class="col-md-4">
+                    <div class="card shadow-sm mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ $site->name }}</h5>
+                            <p class="card-text">{{ $site->location }}</p>
+                            <a href="{{ route('sites.show', [$project->id, $site->id]) }}" class="btn btn-sm btn-info">
+                                Lihat Pasien
+                            </a>
                         </div>
-
-                        <!-- Table with stripped rows -->
-                        <table class="table datatable">
-                            <thead>
-                                <tr>
-                                    <th>Kode Entry</th>
-                                    <th>Kategori</th>
-                                    <th>Deskripsi</th>
-                                    <th>Tanggal</th>
-                                    <th>Dibuat Oleh</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($entries as $entry)
-                                    <tr>
-                                        <td>{{ $entry->entry_key }}</td>
-                                        <td>{{ $entry->category->category_main }} - {{ $entry->category->category_sub }}
-                                        </td>
-                                        <td>{{ Str::limit($entry->entry_description, 50) }}</td>
-                                        <td>{{ $entry->entry_date }}</td>
-                                        <td>{{ $entry->createdBy->name ?? '-' }}</td>
-                                        <td>
-                                            <a href="{{ route('entries.show', $entry->id) }}"
-                                                class="btn btn-sm btn-info">Detail</a>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="6" class="text-center">Belum ada entries di project ini.</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                        <!-- End Table with stripped rows -->
                     </div>
                 </div>
-
-            </div>
+            @empty
+                <div class="col-12 text-center">
+                    <p>Belum ada rumah sakit pada project ini.</p>
+                </div>
+            @endforelse
         </div>
     </section>
 @endsection

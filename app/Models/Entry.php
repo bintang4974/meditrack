@@ -8,6 +8,11 @@ class Entry extends Model
 {
     protected $guarded = [];
 
+    protected $casts = [
+        'log_image_files' => 'array',
+        'log_document_files' => 'array',
+    ];
+
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');

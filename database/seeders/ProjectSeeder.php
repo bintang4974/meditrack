@@ -21,13 +21,19 @@ class ProjectSeeder extends Seeder
      */
     public function run(): void
     {
+        $ownerId = DB::table('users')->where('email', 'admin@gmail.com')->value('id');
+
+        if (!$ownerId) {
+            throw new \Exception("User admin@gmail.com belum ada, jalankan UserSeeder dulu!");
+        }
+
         DB::table('projects')->insert([
             [
-                'site_id' => 1,
-                'name' => 'Project RSUD Surabaya',
-                'description' => 'Logbook project untuk RSUD Surabaya',
-                'voucher_code' => 'PRJAAA0001',
-                'owner_id' => 1, // user Admin
+                'project_code' => 'PRJAAA0001',
+                'voucher_code' => Str::upper(Str::random(8)),
+                'name' => 'Project Operasi Obgyn Jawa Timur',
+                'description' => 'Logbook project untuk berbagai RS di Jawa Timur',
+                'owner_id' => $ownerId,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]

@@ -8,6 +8,13 @@ class Project extends Model
 {
     protected $guarded = [];
 
+    // 🔹 Relasi ke user (owner project)
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'owner_id');
+    }
+
+    // 🔹 Relasi ke user_projects (anggota project)
     public function users()
     {
         return $this->belongsToMany(User::class, 'user_projects')
@@ -15,10 +22,10 @@ class Project extends Model
             ->withTimestamps();
     }
 
-    // 🔥 FIX: Project belongsTo Site
-    public function site()
+    // 🔹 Relasi ke sites (1 project punya banyak site)
+    public function sites()
     {
-        return $this->belongsTo(Site::class);
+        return $this->hasMany(Site::class);
     }
 
     public function templates()
@@ -26,8 +33,9 @@ class Project extends Model
         return $this->hasMany(Template::class);
     }
 
+    // 🔹 Relasi ke entries (1 project bisa punya banyak entries via pasien)
     public function entries()
     {
-        return $this->hasMany(Entry::class, 'project_id');
+        return $this->hasMany(Entry::class);
     }
 }

@@ -14,29 +14,36 @@ class UserProjectSeeder extends Seeder
      */
     public function run(): void
     {
-        // contoh user_id 1 = owner, user_id 2 & 3 = member
+        $adminId     = DB::table('users')->where('email', 'admin@gmail.com')->value('id');
+        $doctorId    = DB::table('users')->where('email', 'birama@gmail.com')->value('id');
+        // $residentId  = DB::table('users')->where('email', 'naufal@gmail.com')->value('id');
+
+        if (!$adminId || !$doctorId) {
+            throw new \Exception("UserSeeder belum jalan atau email user tidak ditemukan.");
+        }
+
         DB::table('user_projects')->insert([
             [
-                'user_id' => 1,
+                'user_id' => $adminId,
                 'project_id' => 1,
                 'role_in_project' => 'owner',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
-                'user_id' => 2,
+                'user_id' => $doctorId,
                 'project_id' => 1,
                 'role_in_project' => 'member',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
-            [
-                'user_id' => 3,
-                'project_id' => 1,
-                'role_in_project' => 'supervisor',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
+            // [
+            //     'user_id' => $residentId,
+            //     'project_id' => 1,
+            //     'role_in_project' => 'supervisor',
+            //     'created_at' => Carbon::now(),
+            //     'updated_at' => Carbon::now(),
+            // ],
         ]);
     }
 }

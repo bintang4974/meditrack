@@ -13,17 +13,12 @@ return new class extends Migration
     {
         Schema::create('entries', function (Blueprint $table) {
             $table->id();
-            // Relasi ke Project
-            $table->foreignId('project_id')->constrained('projects')->cascadeOnDelete();
-            $table->foreignId('patient_id')->constrained('patients')->cascadeOnDelete();
+            $table->foreignId('project_id')->constrained('projects')->cascadeOnDelete(); // ✅ project
+            $table->foreignId('patient_id')->constrained('patients')->cascadeOnDelete(); // ✅ pasien
 
-            // Kalau masih perlu menyimpan kode unik seperti voucher
-            $table->string('entry_key')->unique();
-
-            // Encounter (opsional kalau memang dipakai)
+            $table->string('entry_key')->unique(); // kode unik logbook
             $table->string('encounter_key')->nullable();
 
-            // Relasi ke categories
             $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
 
             // Surgical

@@ -14,8 +14,8 @@ class CategoriesSeeder extends Seeder
      */
     public function run(): void
     {
-        $projectKey = 'PRJAAA0001';
-        
+        $projectCode = 'PRJAAA0001';
+
         $categories = [
             ['key' => 'CAT1001', 'main' => 'Surgical Care', 'sub' => 'Major Surgery'],
             ['key' => 'CAT2001', 'main' => 'Medical Care', 'sub' => 'Pharmacological Therapy'],
@@ -24,9 +24,8 @@ class CategoriesSeeder extends Seeder
 
         foreach ($categories as $cat) {
             DB::table('categories')->insert([
-                // 'project_id' => 1, // sesuai project_id
-                'project_key' => $projectKey,
-                'category_key' => 'PRJAAA0001-' . $cat['key'],
+                'project_key' => $projectCode,
+                'category_key' => $projectCode . '-' . $cat['key'],
                 'category_main' => $cat['main'],
                 'category_sub' => $cat['sub'],
                 'category_is_active' => true,
