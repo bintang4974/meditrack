@@ -6,14 +6,18 @@
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('projects.index') }}">Home</a></li>
+                <li class="breadcrumb-item">Project</li>
                 <li class="breadcrumb-item active">{{ $project->name }}</li>
             </ol>
         </nav>
     </div><!-- End Page Title -->
 
     <section class="section">
-        <div class="card mb-4">
+        <div class="card">
             <div class="card-body">
+                <div class="card-title">
+                    <h4>{{ $project->name }}</h4>
+                </div>
                 <h5>Deskripsi</h5>
                 <p>{{ $project->description }}</p>
                 <p><strong>Kode:</strong> {{ $project->project_code }}</p>
