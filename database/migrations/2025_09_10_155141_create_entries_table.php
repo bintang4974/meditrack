@@ -13,16 +13,25 @@ return new class extends Migration
     {
         Schema::create('entries', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('project_id')->constrained('projects')->cascadeOnDelete(); // ✅ project
-            $table->foreignId('patient_id')->constrained('patients')->cascadeOnDelete(); // ✅ pasien
+            $table->foreignId('project_id')->constrained('projects')->cascadeOnDelete();
+            $table->foreignId('patient_id')->constrained('patients')->cascadeOnDelete();
 
-            $table->string('entry_key')->unique(); // kode unik logbook
+            $table->string('entry_key')->unique();
             $table->string('encounter_key')->nullable();
 
-            $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
+            // pakai sub_categories
+            $table->foreignId('sub_category_id')->constrained('sub_categories')->cascadeOnDelete();
+
+            // General
+            $table->string('entry_description')->nullable();
+            $table->string('entry_label')->nullable();
+            $table->date('entry_date')->nullable();
+            $table->time('entry_time')->nullable();
+            $table->string('image_file')->nullable();     // ganti dari json → varchar
+            $table->string('document_file')->nullable();  // ganti dari json → varchar
 
             // Surgical
-            $table->date('surgical_date_id')->nullable();
+            $table->date('surgical_date')->nullable();
             $table->string('surgical_site_key')->nullable();
             $table->time('surgery_start_time')->nullable();
             $table->time('surgery_end_time')->nullable();
@@ -48,7 +57,7 @@ return new class extends Migration
             $table->string('waitlist_type')->nullable();
             $table->integer('waitlist_duration')->nullable();
             $table->string('waitlist_planned_procedure')->nullable();
-            $table->foreignId('waitlist_operator_key')->nullable()->constrained('doctors')->nullOnDelete();
+            $table->foreignId('waitlist_operator')->nullable()->constrained('doctors')->nullOnDelete();
             $table->string('waitlist_scheduling_status')->nullable();
             $table->date('waitlist_scheduled_date')->nullable();
             $table->string('waitlist_operating_room')->nullable();
@@ -60,14 +69,6 @@ return new class extends Migration
             $table->date('waitlist_suspended_date')->nullable();
             $table->string('waitlist_suspended_reason')->nullable();
             $table->text('waitlist_suspended_notes')->nullable();
-
-            // General
-            $table->longText('entry_description')->nullable();
-            $table->string('entry_label')->nullable();
-            $table->date('entry_date')->nullable();
-            $table->time('entry_time')->nullable();
-            $table->json('log_image_files')->nullable();
-            $table->json('log_document_files')->nullable();
 
             // Supervisor & competence
             $table->foreignId('entry_supervisor')->nullable()->constrained('doctors')->nullOnDelete();

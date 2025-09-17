@@ -14,19 +14,18 @@ class EntrySeeder extends Seeder
      */
     public function run(): void
     {
-        $catSurgical = DB::table('categories')
-            ->where('category_main', 'Surgical Care')
-            ->where('category_sub', 'Major Surgery')
+        $subCat = DB::table('sub_categories')
+            ->where('name', 'Major Surgery')
             ->first();
 
         DB::table('entries')->insert([
             [
                 'project_id' => 1,
-                'patient_id' => 1, // Ahmad Fikri (site_id=1)
+                'patient_id' => 1,
                 'entry_key' => 'ENTRY001',
                 'encounter_key' => 'ENC001',
-                'category_id' => $catSurgical->id,
-                'surgical_date_id' => '2025-09-06',
+                'sub_category_id' => $subCat->id,
+                'surgical_date' => '2025-09-06',
                 'surgical_site_key' => 'RSUD Surabaya',
                 'surgery_start_time' => '14:00:00',
                 'surgery_end_time' => '15:00:00',
@@ -41,8 +40,8 @@ class EntrySeeder extends Seeder
                 'entry_label' => 'Surgery',
                 'entry_date' => '2025-09-06',
                 'entry_time' => '14:00:00',
-                'log_image_files' => json_encode(['images/lipoma1.jpg']),
-                'log_document_files' => json_encode(['docs/lipoma-report.pdf']),
+                'image_file' => 'images/lipoma1.jpg',
+                'document_file' => 'docs/lipoma-report.pdf',
                 'entry_supervisor' => 3,
                 'competence_level' => 'Beginner',
                 'insurance_status' => 'Private',

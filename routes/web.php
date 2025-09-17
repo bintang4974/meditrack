@@ -43,6 +43,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/projects/{project}/sites/{site}/patients/{patient}/entries/{entry}', [EntryController::class, 'show'])->name('entries.show');
     Route::get('/entries/form-fields/{category}', [EntryController::class, 'formFields'])->name('entries.formFields');
 
+    Route::get('/sub-categories/{category}', [CategoryController::class, 'subCategories']);
+    Route::get('/categories/{category}/sub-categories', [EntryController::class, 'getSubCategories'])->name('categories.subCategories');
 
     // form create entry untuk project tertentu
     // Route::get('/projects/{project}/entries/create', [EntryController::class, 'create'])->name('projects.entries.create');

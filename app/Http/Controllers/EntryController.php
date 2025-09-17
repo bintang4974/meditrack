@@ -29,9 +29,17 @@ class EntryController extends Controller
     public function create(Project $project, Site $site, Patient $patient)
     {
         $pageTitle = 'Tambah Entry';
-        $categories = Category::where('project_key', $project->project_code)->get();
+        // $categories = Category::where('project_key', $project->project_code)->get();
+        $categories = Category::all();
 
         return view('entry.create', compact('pageTitle', 'project', 'site', 'patient', 'categories'));
+    }
+
+    public function getSubCategories(Category $category)
+    {
+        // Ambil hanya sub categories yang aktif
+        $subs = $category->subCategories()->where('is_active', true)->get(['id', 'name']);
+        return response()->json($subs);
     }
 
     // load form fields sesuai kategori (AJAX)
@@ -47,19 +55,21 @@ class EntryController extends Controller
     public function store(Request $request, Project $project, Site $site, Patient $patient)
     {
         $request->validate([
-            'category_id' => 'required|exists:categories,id',
+            'sub_category_id' => 'required|exists:sub_categories,id',
             'entry_date' => 'required|date',
             'entry_label' => 'nullable|string|max:255',
             'entry_description' => 'nullable|string',
+            'image_file' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+            'document_file' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
         ]);
-
-        $entryKey = 'ENT-' . strtoupper(Str::random(6));
 
         $entry = new Entry();
         $entry->project_id = $project->id;
         $entry->patient_id = $patient->id;
-        $entry->entry_key = $entryKey;
-        $entry->category_id = $request->category_id;
+        $entry->sub_category_id = $request->sub_category_id;
+        $entry->entry_key = 'ENT' . strtoupper(uniqid());
+        $entry->entry_date = now();
+        $entry->created_by = auth()->id();
 
         // General
         $entry->entry_label = $request->entry_label;
@@ -87,23 +97,13 @@ class EntryController extends Controller
         $entry->waitlist_entry_date = $request->waitlist_entry_date;
         $entry->waitlist_planned_procedure = $request->waitlist_planned_procedure;
 
-        // Upload Images
-        if ($request->hasFile('images')) {
-            $images = [];
-            foreach ($request->file('images') as $file) {
-                $images[] = $file->store('uploads/images', 'public');
-            }
-            $entry->log_image_files = json_encode($images);
+        if ($request->hasFile('image_file')) {
+            $entry->image_file = $request->file('image_file')->store('images', 'public');
+        }
+        if ($request->hasFile('document_file')) {
+            $entry->document_file = $request->file('document_file')->store('documents', 'public');
         }
 
-        // Upload Documents
-        if ($request->hasFile('documents')) {
-            $docs = [];
-            foreach ($request->file('documents') as $file) {
-                $docs[] = $file->store('uploads/documents', 'public');
-            }
-            $entry->log_document_files = json_encode($docs);
-        }
 
         // Supervisor & Competence
         $entry->entry_supervisor = $request->entry_supervisor;

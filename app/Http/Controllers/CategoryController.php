@@ -20,6 +20,14 @@ class CategoryController extends Controller
         return view('categories.index', compact('categories', 'pageTitle'));
     }
 
+    public function subCategories(Category $category)
+    {
+        return response()->json(
+            $category->subCategories()->where('is_active', true)->get()
+        );
+    }
+
+
     /**
      * Show the form for creating a new resource.
      */

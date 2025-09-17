@@ -6,79 +6,70 @@
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                <li class="breadcrumb-item active">Detail Pasien</li>
+                <li class="breadcrumb-item">Pasien</li>
+                <li class="breadcrumb-item active">{{ $patient->name }}</li>
             </ol>
         </nav>
     </div>
 
     <section class="section">
         <div class="row">
+            <!-- Info Pasien -->
             <div class="col-md-4">
-                <!-- Info Pasien -->
                 <div class="card">
                     <div class="card-body">
-                        <div class="card-title">
-                            <h4>{{ $patient->name }}</h4>
-                        </div>
+                        <h4>{{ $patient->name }}</h4>
                         <p><strong>No. RM:</strong> {{ $patient->rekam_medis }}</p>
                         <p><strong>Tanggal Lahir:</strong> {{ $patient->dob ?? '-' }}</p>
                     </div>
                 </div>
             </div>
 
+            <!-- List Entries -->
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-body">
-                        <div class="card-title">
-                            <!-- Tambah Entry -->
-                            <a href="{{ route('entries.create', [
-                                'project' => $project->id,
-                                'site' => $site->id,
-                                'patient' => $patient->id,
-                            ]) }}"
-                                class="btn btn-primary mb-3">
-                                <i class="bi bi-bookmark-plus-fill"></i> Tambah Entry
-                            </a>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="card-title">Riwayat Entries</h5>
+                            <a href="{{ route('entries.create', ['project' => $project->id, 'site' => $site->id, 'patient' => $patient->id]) }}"
+                                class="btn btn-primary"><i class="bi bi-plus-circle"></i> Tambah Entry</a>
                         </div>
 
-                        <!-- Table entries -->
-                        <table class="table datatable">
+                        <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th>No.</th>
-                                    <th>Kode Entry</th>
-                                    <th>Kategori</th>
                                     <th>Tanggal</th>
-                                    <th>Dibuat Oleh</th>
-                                    <th>Aksi</th>
+                                    <th>Keterangan</th>
+                                    <th>Deskripsi</th>
+                                    <th>File</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($entries as $entry)
                                     <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $entry->entry_key }}</td>
-                                        <td>{{ $entry->category->category_main }} - {{ $entry->category->category_sub }}
-                                        </td>
                                         <td>{{ $entry->entry_date }}</td>
-                                        <td>{{ $entry->createdBy->name ?? '-' }}</td>
+                                        <td>{{ $entry->subCategory->category->category_main }} >
+                                            {{ $entry->subCategory->name }}</td>
+                                        <td>{{ $entry->entry_description }}</td>
                                         <td>
-                                            <a href="{{ route('entries.show', [
-                                                'project' => $project->id,
-                                                'site' => $site->id,
-                                                'patient' => $patient->id,
-                                                'entry' => $entry->id,
-                                            ]) }}"
-                                                class="btn btn-sm btn-info">Detail</a>
+                                            @if ($entry->image_file)
+                                                <a href="{{ asset('storage/' . $entry->image_file) }}"
+                                                    target="_blank">Gambar</a><br>
+                                            @endif
+                                            @if ($entry->document_file)
+                                                <a href="{{ asset('storage/' . $entry->document_file) }}"
+                                                    target="_blank">Dokumen</a>
+                                            @endif
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="text-center">Belum ada rekam medis</td>
+                                        <td colspan="4" class="text-center">Belum ada entry</td>
                                     </tr>
                                 @endforelse
                             </tbody>
                         </table>
+
                     </div>
                 </div>
             </div>

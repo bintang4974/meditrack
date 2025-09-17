@@ -18,6 +18,7 @@
             </div>
             <div class="col-md-6">
                 <form action="{{ route('projects.search') }}" method="GET" class="d-flex">
+                    @csrf
                     <input type="text" name="project_code" class="form-control me-2"
                         placeholder="Cari Project dengan Kode">
                     <button class="btn btn-outline-secondary">Search</button>
