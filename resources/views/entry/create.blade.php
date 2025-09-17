@@ -5,46 +5,42 @@
         <h1>{{ $pageTitle }}</h1>
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                <li class="breadcrumb-item">Tables</li>
-                <li class="breadcrumb-item active">Data</li>
+                <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item">Entry</li>
+                <li class="breadcrumb-item active">Tambah Entry</li>
             </ol>
         </nav>
-    </div><!-- End Page Title -->
+    </div>
 
     <section class="section">
         <div class="card">
             <div class="card-body">
                 <form
-                    action="{{ route('entries.store', [
-                        'project' => $project->id,
-                        'site' => $site->id,
-                        'patient' => $patient->id,
-                    ]) }}"
+                    action="{{ route('entries.store', ['project' => $project->id, 'site' => $site->id, 'patient' => $patient->id]) }}"
                     method="POST" enctype="multipart/form-data">
                     @csrf
+
+                    <!-- Category -->
                     <div class="mb-3">
                         <label for="category_id">Kategori</label>
-                        <select id="category_id" name="category_id" class="form-control" required>
+                        <select id="category_id" class="form-control" required>
                             <option value="">-- Pilih Kategori --</option>
                             @foreach ($categories as $cat)
-                                <option value="{{ $cat->id }}">{{ $cat->category_main }} - {{ $cat->category_sub }}
-                                </option>
+                                <option value="{{ $cat->id }}">{{ $cat->name }}</option>
                             @endforeach
                         </select>
                     </div>
 
-                    <div id="form-fields">
-                        <p class="text-muted">Silakan pilih kategori untuk menampilkan form tambahan.</p>
+                    <div class="mb-3">
+                        <label for="sub_category_id">Sub Kategori</label>
+                        <select name="sub_category_id" id="sub_category_id" class="form-control" required>
+                            <option value="">-- Pilih Sub Kategori --</option>
+                        </select>
                     </div>
 
+                    <!-- Entry fields -->
                     <div class="mb-3">
-                        <label for="entry_date">Tanggal Entry</label>
-                        <input type="date" name="entry_date" class="form-control" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="entry_label">Label</label>
+                        <label for="entry_label">Judul / Label</label>
                         <input type="text" name="entry_label" class="form-control">
                     </div>
 
@@ -53,12 +49,28 @@
                         <textarea name="entry_description" class="form-control"></textarea>
                     </div>
 
+                    <div class="mb-3">
+                        <label for="entry_date">Tanggal</label>
+                        <input type="date" name="entry_date" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="entry_time">Waktu</label>
+                        <input type="time" name="entry_time" class="form-control">
+                    </div>
+
+                    <!-- Upload -->
+                    <div class="mb-3">
+                        <label for="image_file">Upload Gambar</label>
+                        <input type="file" name="image_file" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="document_file">Upload Dokumen</label>
+                        <input type="file" name="document_file" class="form-control">
+                    </div>
+
                     <button type="submit" class="btn btn-success">Simpan</button>
-                    <a href="{{ route('patients.show', [
-                        'project' => $project->id,
-                        'site' => $site->id,
-                        'patient' => $patient->id,
-                    ]) }}"
+                    <a href="{{ route('patients.show', ['project' => $project->id, 'site' => $site->id, 'patient' => $patient->id]) }}"
                         class="btn btn-secondary">Kembali</a>
                 </form>
             </div>
@@ -70,17 +82,24 @@
     <script>
         document.getElementById('category_id').addEventListener('change', function() {
             let catId = this.value;
-            if (!catId) return;
+            let subSelect = document.getElementById('sub_category_id');
+            subSelect.innerHTML = '<option value="">Loading...</option>';
 
-            fetch(`{{ url('/entries/form-fields') }}/${catId}`)
-                .then(res => res.text())
-                .then(html => {
-                    document.getElementById('form-fields').innerHTML = html;
-                })
-                .catch(err => {
-                    document.getElementById('form-fields').innerHTML =
-                        `<p class="text-danger">Gagal load form (${err.message})</p>`;
-                });
+            if (catId) {
+                fetch(`/categories/${catId}/sub-categories`)
+                    .then(res => res.json())
+                    .then(data => {
+                        subSelect.innerHTML = '<option value="">-- Pilih Sub Kategori --</option>';
+                        data.forEach(sub => {
+                            subSelect.innerHTML += `<option value="${sub.id}">${sub.name}</option>`;
+                        });
+                    })
+                    .catch(() => {
+                        subSelect.innerHTML = '<option value="">Gagal memuat</option>';
+                    });
+            } else {
+                subSelect.innerHTML = '<option value="">-- Pilih Sub Kategori --</option>';
+            }
         });
     </script>
 @endpush

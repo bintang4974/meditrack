@@ -59,14 +59,20 @@ class ProjectController extends Controller
 
     public function search(Request $request)
     {
-        $pageTitle = "Cari Project";
-        $project = null;
+        $code = $request->input('project_code');
 
-        if ($request->filled('project_code')) {
-            $project = Project::where('project_code', $request->project_code)->first();
+        $project = Project::where('project_code', $code)
+            ->orWhere('voucher_code', $code)
+            ->first();
+
+        if (!$project) {
+            return back()->with('error', 'Project dengan kode tersebut tidak ditemukan.');
         }
 
-        return view('projects.search', compact('project', 'pageTitle'));
+        return view('projects.search_result', [
+            'project' => $project,
+            'pageTitle' => 'Hasil Pencarian Project'
+        ]);
     }
 
     public function join(Request $request, Project $project)
