@@ -1,12 +1,17 @@
+{{-- SUSPENDED --}}
+<h5 class="mt-3">Surgical Waitlist - Suspended</h5>
+
 <div class="mb-3">
     <label>Tanggal Ditunda</label>
     <input type="date" name="waitlist_suspended_date" class="form-control">
 </div>
+
 <div class="mb-3">
-    <label>Alasan</label>
+    <label>Alasan Ditunda</label>
     <input type="text" name="waitlist_suspended_reason" class="form-control">
 </div>
+
 <div class="mb-3">
-    <label>Catatan</label>
+    <label>Catatan Penundaan</label>
     <textarea name="waitlist_suspended_notes" class="form-control"></textarea>
 </div>

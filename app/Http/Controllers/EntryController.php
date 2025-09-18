@@ -10,6 +10,10 @@ use App\Models\Site;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 class EntryController extends Controller
 {
@@ -55,73 +59,53 @@ class EntryController extends Controller
      */
     public function store(Request $request, Project $project, Site $site, Patient $patient)
     {
-        $request->validate([
-            'sub_category_id' => 'required|exists:sub_categories,id',
-            'entry_date' => 'required|date',
-            'entry_label' => 'nullable|string|max:255',
-            'entry_description' => 'nullable|string',
-            'image_file' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
-            'document_file' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
-        ]);
+        // Ambil semua kolom dari tabel entries
+        $columns = Schema::getColumnListing('entries');
 
-        $entry = new Entry();
-        $entry->project_id = $project->id;
-        $entry->patient_id = $patient->id;
-        $entry->sub_category_id = $request->sub_category_id;
-        $entry->entry_key = 'ENT' . strtoupper(uniqid());
-        $entry->entry_date = now();
-        $entry->created_by = auth()->id();
+        // Generate entry_key jika belum ada
+        $entryKey = $request->entry_key ?? 'ENT-' . strtoupper(Str::random(8));
 
-        // General
-        $entry->entry_label = $request->entry_label;
-        $entry->entry_description = $request->entry_description;
-        $entry->entry_date = $request->entry_date;
-        $entry->entry_time = $request->entry_time;
+        // Filter request hanya untuk kolom yang ada di tabel
+        $data = $request->only($columns);
 
-        // Surgical Care
-        $entry->surgical_date_id = $request->surgical_date_id;
-        $entry->surgical_site_key = $request->surgical_site_key;
-        $entry->surgery_start_time = $request->surgery_start_time;
-        $entry->surgery_end_time = $request->surgery_end_time;
-        $entry->operator_1 = $request->operator_1;
-        $entry->operator_2 = $request->operator_2;
-        $entry->operator_3 = $request->operator_3;
-        $entry->operator_4 = $request->operator_4;
-        $entry->preoperative_diagnosis = $request->preoperative_diagnosis;
-        $entry->intraoperative_diagnosis = $request->intraoperative_diagnosis;
-        $entry->surgical_procedure = $request->surgical_procedure;
-        $entry->estimated_blood_loss = $request->estimated_blood_loss;
-        $entry->surgical_notes = $request->surgical_notes;
+        // Set kolom wajib
+        $data['project_id'] = $project->id;
+        $data['patient_id'] = $patient->id;
+        $data['entry_key'] = $entryKey;
+        $data['created_by'] = auth()->id();
+        $data['last_modified_by'] = auth()->id();
 
-        // Waitlist
-        $entry->waitlist_status = $request->waitlist_status;
-        $entry->waitlist_entry_date = $request->waitlist_entry_date;
-        $entry->waitlist_planned_procedure = $request->waitlist_planned_procedure;
+        // Buat instance ImageManager
+        $manager = new ImageManager(new Driver());
 
+        // Handle upload gambar
         if ($request->hasFile('image_file')) {
-            $entry->image_file = $request->file('image_file')->store('images', 'public');
+            $image = $request->file('image_file');
+            $filename = 'entries/images/' . uniqid() . '.' . $image->getClientOriginalExtension();
+
+            // Resize / compress gambar (max width 1200px, kualitas 80%)
+            $resized = $manager->read($image->getRealPath())
+                ->scale(width: 1200)   // resize ke max 1200px, height auto
+                ->toJpeg(80);          // compress ke JPEG dengan kualitas 80%
+
+            // Simpan ke storage
+            Storage::disk('public')->put($filename, (string) $resized);
+            $data['image_file'] = $filename;
         }
+
+        // Handle upload dokumen
         if ($request->hasFile('document_file')) {
-            $entry->document_file = $request->file('document_file')->store('documents', 'public');
+            $doc = $request->file('document_file');
+            $filename = $doc->store('entries/documents', 'public');
+            $data['document_file'] = $filename;
         }
 
+        // Simpan ke database
+        $entry = Entry::create($data);
 
-        // Supervisor & Competence
-        $entry->entry_supervisor = $request->entry_supervisor;
-        $entry->competence_level = $request->competence_level;
-
-        // Insurance
-        $entry->insurance_status = $request->insurance_status;
-        $entry->insurance_notes = $request->insurance_notes;
-
-        // Audit
-        $entry->created_by = Auth::id();
-        $entry->last_modified_by = Auth::id();
-
-        $entry->save();
-
-        return redirect()->route('patients.show', [$project->id, $site->id, $patient->id])
-            ->with('success', 'Entry berhasil disimpan!');
+        return redirect()
+            ->route('patients.show', [$project->id, $site->id, $patient->id])
+            ->with('success', 'Entry berhasil ditambahkan.');
     }
 
     /**

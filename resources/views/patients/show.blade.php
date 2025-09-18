@@ -18,7 +18,9 @@
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-body">
-                        <h4>{{ $patient->name }}</h4>
+                        <div class="card-title">
+                            <h4>{{ $patient->name }}</h4>
+                        </div>
                         <p><strong>No. RM:</strong> {{ $patient->rekam_medis }}</p>
                         <p><strong>Tanggal Lahir:</strong> {{ $patient->dob ?? '-' }}</p>
                     </div>
@@ -35,7 +37,7 @@
                                 class="btn btn-primary"><i class="bi bi-plus-circle"></i> Tambah Entry</a>
                         </div>
 
-                        <table class="table table-bordered">
+                        <table class="table datatable">
                             <thead>
                                 <tr>
                                     <th>Tanggal</th>
@@ -53,13 +55,35 @@
                                             {{ $entry->subCategory->name }}</td>
                                         <td>{{ $entry->entry_description }}</td>
                                         <td>
-                                            @if ($entry->image_file)
+                                            {{-- @if ($entry->image_file)
                                                 <a href="{{ asset('storage/' . $entry->image_file) }}"
                                                     target="_blank">Gambar</a><br>
                                             @endif
                                             @if ($entry->document_file)
                                                 <a href="{{ asset('storage/' . $entry->document_file) }}"
                                                     target="_blank">Dokumen</a>
+                                            @endif --}}
+                                            @php
+                                                $hasImage = !empty($entry->image_file);
+                                                $hasDoc = !empty($entry->document_file);
+                                            @endphp
+
+                                            @if ($hasImage)
+                                                <div class="mb-2">
+                                                    <img src="{{ asset('storage/' . $entry->image_file) }}"
+                                                        alt="entry image" class="img-thumbnail" style="max-width: 100px;">
+                                                </div>
+                                            @endif
+
+                                            @if ($hasDoc)
+                                                <a href="{{ asset('storage/' . $entry->document_file) }}" target="_blank"
+                                                    class="btn btn-sm btn-outline-primary">
+                                                    <i class="bi bi-file-earmark-text"></i> Lihat Dokumen
+                                                </a>
+                                            @endif
+
+                                            @if (!$hasImage && !$hasDoc)
+                                                -
                                             @endif
                                         </td>
                                         <td>

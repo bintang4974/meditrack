@@ -37,7 +37,7 @@
                 </select>
             </div>
 
-            {{-- Waitlist Status (hanya muncul untuk Waitlist Tracking) --}}
+            {{-- Waitlist Status (muncul kalau sub = Surgical Waitlist Tracking) --}}
             <div class="mb-3 d-none" id="waitlist_status_wrapper">
                 <label>Status Waitlist</label>
                 <select id="waitlist_status" name="waitlist_status" class="form-control">
@@ -48,8 +48,10 @@
                 </select>
             </div>
 
-            {{-- Dynamic Fields --}}
-            <div id="form_fields"></div>
+            {{-- Dynamic Form Fields --}}
+            <div id="form_fields">
+                @include('entry.forms.dynamic')
+            </div>
 
             <button type="submit" class="btn btn-primary mt-3">Simpan</button>
         </form>
@@ -60,7 +62,14 @@
     <script>
         const categories = @json($categories);
 
-        // Populate subcategories
+        function showForm(id) {
+            document.querySelectorAll('#form_fields > div').forEach(div => {
+                div.classList.add('d-none');
+            });
+            if (id) document.getElementById(id).classList.remove('d-none');
+        }
+
+        // Handle change kategori → isi sub categories
         document.getElementById('category').addEventListener('change', function() {
             let categoryId = this.value;
             let subCatSelect = document.getElementById('sub_category');
@@ -72,46 +81,38 @@
                     subCatSelect.innerHTML += `<option value="${sc.id}">${sc.name}</option>`;
                 });
             }
+
+            // Reset form ketika ganti kategori
+            showForm(null);
+            document.getElementById('waitlist_status_wrapper').classList.add('d-none');
         });
 
-        // Handle subcategory change
+        // Handle change sub kategori → tampilkan form sesuai rules
         document.getElementById('sub_category').addEventListener('change', function() {
             let subCatText = this.options[this.selectedIndex].text;
-            let categorySelect = document.getElementById('category');
-            let categoryText = categorySelect.options[categorySelect.selectedIndex].text;
+            let categoryText = document.getElementById('category').options[document.getElementById('category')
+                .selectedIndex].text;
             let waitlistWrapper = document.getElementById('waitlist_status_wrapper');
-            let formFields = document.getElementById('form_fields');
-            formFields.innerHTML = '';
 
-            // Surgical Waitlist Tracking (khusus sub kategori)
             if (subCatText.includes("Surgical Waitlist Tracking")) {
                 waitlistWrapper.classList.remove('d-none');
-            }
-            // Semua Surgical Care sub
-            else if (categoryText === "Surgical Care") {
+                showForm(null);
+            } else if (categoryText === "Surgical Care") {
                 waitlistWrapper.classList.add('d-none');
-                formFields.innerHTML = `@include('entry.forms._surgical')`;
-            }
-            // Normal entry (selain 2 kategori di atas)
-            else {
+                showForm("form_surgical");
+            } else {
                 waitlistWrapper.classList.add('d-none');
-                formFields.innerHTML = `@include('entry.forms._normal')`;
+                showForm("form_normal");
             }
         });
 
-        // Waitlist status handler
+        // Handle change waitlist status
         document.getElementById('waitlist_status').addEventListener('change', function() {
             let status = this.value;
-            let formFields = document.getElementById('form_fields');
-            formFields.innerHTML = '';
-
-            if (status === 'active') {
-                formFields.innerHTML = `@include('entry.forms._waitlist_active')`;
-            } else if (status === 'completed') {
-                formFields.innerHTML = `@include('entry.forms._waitlist_completed')`;
-            } else if (status === 'suspended') {
-                formFields.innerHTML = `@include('entry.forms._waitlist_suspended')`;
-            }
+            if (status === 'active') showForm("form_waitlist_active");
+            else if (status === 'completed') showForm("form_waitlist_completed");
+            else if (status === 'suspended') showForm("form_waitlist_suspended");
+            else showForm(null);
         });
     </script>
 @endpush
