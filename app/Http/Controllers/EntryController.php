@@ -30,7 +30,8 @@ class EntryController extends Controller
     {
         $pageTitle = 'Tambah Entry';
         // $categories = Category::where('project_key', $project->project_code)->get();
-        $categories = Category::all();
+        // $categories = Category::all();
+        $categories = Category::with('subCategories')->get();
 
         return view('entry.create', compact('pageTitle', 'project', 'site', 'patient', 'categories'));
     }

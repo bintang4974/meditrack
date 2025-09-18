@@ -12,93 +12,105 @@
         </nav>
     </div>
 
-    <section class="section">
-        <div class="card">
-            <div class="card-body">
-                <form
-                    action="{{ route('entries.store', ['project' => $project->id, 'site' => $site->id, 'patient' => $patient->id]) }}"
-                    method="POST" enctype="multipart/form-data">
-                    @csrf
+    <div class="container">
+        <h3>Tambah Entry</h3>
 
-                    <!-- Category -->
-                    <div class="mb-3">
-                        <label for="category_id">Kategori</label>
-                        <select id="category_id" class="form-control" required>
-                            <option value="">-- Pilih Kategori --</option>
-                            @foreach ($categories as $cat)
-                                <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+        <form action="{{ route('entries.store', [$project, $site, $patient]) }}" method="POST" enctype="multipart/form-data">
+            @csrf
 
-                    <div class="mb-3">
-                        <label for="sub_category_id">Sub Kategori</label>
-                        <select name="sub_category_id" id="sub_category_id" class="form-control" required>
-                            <option value="">-- Pilih Sub Kategori --</option>
-                        </select>
-                    </div>
-
-                    <!-- Entry fields -->
-                    <div class="mb-3">
-                        <label for="entry_label">Judul / Label</label>
-                        <input type="text" name="entry_label" class="form-control">
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="entry_description">Deskripsi</label>
-                        <textarea name="entry_description" class="form-control"></textarea>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="entry_date">Tanggal</label>
-                        <input type="date" name="entry_date" class="form-control" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="entry_time">Waktu</label>
-                        <input type="time" name="entry_time" class="form-control">
-                    </div>
-
-                    <!-- Upload -->
-                    <div class="mb-3">
-                        <label for="image_file">Upload Gambar</label>
-                        <input type="file" name="image_file" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label for="document_file">Upload Dokumen</label>
-                        <input type="file" name="document_file" class="form-control">
-                    </div>
-
-                    <button type="submit" class="btn btn-success">Simpan</button>
-                    <a href="{{ route('patients.show', ['project' => $project->id, 'site' => $site->id, 'patient' => $patient->id]) }}"
-                        class="btn btn-secondary">Kembali</a>
-                </form>
+            {{-- Category --}}
+            <div class="mb-3">
+                <label>Kategori</label>
+                <select id="category" class="form-control">
+                    <option value="">-- Pilih Kategori --</option>
+                    @foreach ($categories as $cat)
+                        <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                    @endforeach
+                </select>
             </div>
-        </div>
-    </section>
+
+            {{-- Sub Category --}}
+            <div class="mb-3">
+                <label>Sub Kategori</label>
+                <select id="sub_category" name="sub_category_id" class="form-control">
+                    <option value="">-- Pilih Sub Kategori --</option>
+                </select>
+            </div>
+
+            {{-- Waitlist Status (hanya muncul untuk Waitlist Tracking) --}}
+            <div class="mb-3 d-none" id="waitlist_status_wrapper">
+                <label>Status Waitlist</label>
+                <select id="waitlist_status" name="waitlist_status" class="form-control">
+                    <option value="">-- Pilih Status --</option>
+                    <option value="active">Active</option>
+                    <option value="completed">Completed</option>
+                    <option value="suspended">Suspended</option>
+                </select>
+            </div>
+
+            {{-- Dynamic Fields --}}
+            <div id="form_fields"></div>
+
+            <button type="submit" class="btn btn-primary mt-3">Simpan</button>
+        </form>
+    </div>
 @endsection
 
 @push('scripts')
     <script>
-        document.getElementById('category_id').addEventListener('change', function() {
-            let catId = this.value;
-            let subSelect = document.getElementById('sub_category_id');
-            subSelect.innerHTML = '<option value="">Loading...</option>';
+        const categories = @json($categories);
 
-            if (catId) {
-                fetch(`/categories/${catId}/sub-categories`)
-                    .then(res => res.json())
-                    .then(data => {
-                        subSelect.innerHTML = '<option value="">-- Pilih Sub Kategori --</option>';
-                        data.forEach(sub => {
-                            subSelect.innerHTML += `<option value="${sub.id}">${sub.name}</option>`;
-                        });
-                    })
-                    .catch(() => {
-                        subSelect.innerHTML = '<option value="">Gagal memuat</option>';
-                    });
-            } else {
-                subSelect.innerHTML = '<option value="">-- Pilih Sub Kategori --</option>';
+        // Populate subcategories
+        document.getElementById('category').addEventListener('change', function() {
+            let categoryId = this.value;
+            let subCatSelect = document.getElementById('sub_category');
+            subCatSelect.innerHTML = '<option value="">-- Pilih Sub Kategori --</option>';
+
+            let selectedCat = categories.find(c => c.id == categoryId);
+            if (selectedCat && selectedCat.sub_categories) {
+                selectedCat.sub_categories.forEach(sc => {
+                    subCatSelect.innerHTML += `<option value="${sc.id}">${sc.name}</option>`;
+                });
+            }
+        });
+
+        // Handle subcategory change
+        document.getElementById('sub_category').addEventListener('change', function() {
+            let subCatText = this.options[this.selectedIndex].text;
+            let categorySelect = document.getElementById('category');
+            let categoryText = categorySelect.options[categorySelect.selectedIndex].text;
+            let waitlistWrapper = document.getElementById('waitlist_status_wrapper');
+            let formFields = document.getElementById('form_fields');
+            formFields.innerHTML = '';
+
+            // Surgical Waitlist Tracking (khusus sub kategori)
+            if (subCatText.includes("Surgical Waitlist Tracking")) {
+                waitlistWrapper.classList.remove('d-none');
+            }
+            // Semua Surgical Care sub
+            else if (categoryText === "Surgical Care") {
+                waitlistWrapper.classList.add('d-none');
+                formFields.innerHTML = `@include('entry.forms._surgical')`;
+            }
+            // Normal entry (selain 2 kategori di atas)
+            else {
+                waitlistWrapper.classList.add('d-none');
+                formFields.innerHTML = `@include('entry.forms._normal')`;
+            }
+        });
+
+        // Waitlist status handler
+        document.getElementById('waitlist_status').addEventListener('change', function() {
+            let status = this.value;
+            let formFields = document.getElementById('form_fields');
+            formFields.innerHTML = '';
+
+            if (status === 'active') {
+                formFields.innerHTML = `@include('entry.forms._waitlist_active')`;
+            } else if (status === 'completed') {
+                formFields.innerHTML = `@include('entry.forms._waitlist_completed')`;
+            } else if (status === 'suspended') {
+                formFields.innerHTML = `@include('entry.forms._waitlist_suspended')`;
             }
         });
     </script>
