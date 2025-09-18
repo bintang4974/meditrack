@@ -42,6 +42,7 @@
                                     <th>Keterangan</th>
                                     <th>Deskripsi</th>
                                     <th>File</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -61,6 +62,16 @@
                                                     target="_blank">Dokumen</a>
                                             @endif
                                         </td>
+                                        <td>
+                                            <a href="{{ route('entries.show', [
+                                                'project' => $project->id,
+                                                'site' => $site->id,
+                                                'patient' => $patient->id,
+                                                'entry' => $entry->id,
+                                            ]) }}"
+                                                class="btn btn-sm btn-info">
+                                                <i class="bi bi-eye"></i> Detail
+                                            </a>
                                     </tr>
                                 @empty
                                     <tr>
