@@ -135,6 +135,24 @@
                     <span>Project</span>
                 </a>
             </li><!-- End Dashboard Nav -->
+            {{-- <li class="nav-item">
+                @php
+                    $isOwner = Auth::user()->projects()->wherePivot('role_in_project', 'owner')->exists();
+                @endphp
+
+                @if ($isOwner)
+                    <a class="nav-link" href="{{ route('projects.index') }}">
+                        <i class="bi bi-people"></i>
+                        <span>Join Requests</span>
+                    </a>
+                @endif
+
+                <a class="nav-link {{ request()->is('projects') ? 'active' : 'collapsed' }}"
+                    href="{{ route('projects.joinRequests') }}">
+                    <i class="bi bi-kanban"></i>
+                    <span>Acc</span>
+                </a>
+            </li><!-- End Dashboard Nav --> --}}
 
             {{-- <li class="nav-item">
                 <a class="nav-link {{ request()->is('sites') ? 'active' : 'collapsed' }}"

@@ -25,6 +25,13 @@
             </div>
         </div>
 
+        {{-- tombol join request hanya untuk owner --}}
+        @if ($project->owner_id === auth()->id())
+            <a href="{{ route('projects.joinRequests', $project->id) }}" class="btn btn-warning mt-3">
+                Lihat Permintaan Join
+            </a>
+        @endif
+
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4>Daftar Rumah Sakit</h4>
             <a href="{{ route('sites.create', $project->id) }}" class="btn btn-primary">+ Tambah Rumah Sakit</a>
