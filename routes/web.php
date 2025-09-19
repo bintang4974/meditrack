@@ -24,11 +24,13 @@ Auth::routes();
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Route::post('/projects/join', [ProjectController::class, 'join'])->name('projects.join');
-    Route::resource('projects', ProjectController::class)->only(['index', 'create', 'store', 'show']);
     // Search & Join Project
     Route::get('/projects/search', [ProjectController::class, 'search'])->name('projects.search');
     Route::post('/projects/{project}/join', [ProjectController::class, 'join'])->name('projects.join');
+    Route::get('/projects/{project}/join-requests', [ProjectController::class, 'joinRequests'])->name('projects.joinRequests');
+    Route::post('/projects/{project}/join-requests/{joinRequest}/approve', [ProjectController::class, 'approveRequest'])->name('projects.approveRequest');
+    Route::post('/projects/{project}/join-requests/{joinRequest}/reject', [ProjectController::class, 'rejectRequest'])->name('projects.rejectRequest');
+    Route::resource('projects', ProjectController::class)->only(['index', 'create', 'store', 'show']);
     // Sites (nested di dalam project)
     Route::get('/projects/{project}/sites/create', [SiteController::class, 'create'])->name('sites.create');
     Route::post('/projects/{project}/sites', [SiteController::class, 'store'])->name('sites.store');
@@ -46,17 +48,5 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/sub-categories/{category}', [CategoryController::class, 'subCategories']);
     Route::get('/categories/{category}/sub-categories', [EntryController::class, 'getSubCategories'])->name('categories.subCategories');
 
-    // form create entry untuk project tertentu
-    // Route::get('/projects/{project}/entries/create', [EntryController::class, 'create'])->name('projects.entries.create');
-    // Route::post('/projects/{project}/entries', [EntryController::class, 'store'])->name('projects.entries.store');
-
     Route::resource('entries', EntryController::class)->only(['index']);
-    // ajax form field loader
-    // Route::get('/entries/form-fields/{category}', [EntryController::class, 'formFields'])->name('entries.formFields');
-
-
-    // Route::resource('sites', SiteController::class)->except(['show']);
-    // Route::resource('categories', CategoryController::class)->except(['show']);
-    // Route::resource('patients', PatientController::class)->except(['show']);
-    // Route::resource('doctors', DoctorController::class);
 });

@@ -38,4 +38,9 @@ class Project extends Model
     {
         return $this->hasMany(Entry::class);
     }
+
+    public function joinRequests()
+    {
+        return $this->hasMany(ProjectJoinRequest::class);
+    }
 }

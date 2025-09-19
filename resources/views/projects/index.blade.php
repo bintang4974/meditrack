@@ -17,10 +17,10 @@
                 <a href="{{ route('projects.create') }}" class="btn btn-primary">+ Buat Project Baru</a>
             </div>
             <div class="col-md-6">
+                {{-- 🔍 Search Project by Code --}}
                 <form action="{{ route('projects.search') }}" method="GET" class="d-flex">
-                    @csrf
                     <input type="text" name="project_code" class="form-control me-2"
-                        placeholder="Cari Project dengan Kode">
+                        placeholder="Masukkan Kode Project atau Voucher" required>
                     <button class="btn btn-outline-secondary">Search</button>
                 </form>
             </div>

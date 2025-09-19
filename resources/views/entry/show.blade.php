@@ -6,8 +6,8 @@
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                <li class="breadcrumb-item"><a
-                        href="{{ route('patients.show', ['project' => $project->id, 'site' => $site->id, 'patient' => $patient->id]) }}">Pasien</a>
+                <li class="breadcrumb-item">
+                    <a href="{{ route('patients.show', [$project->id, $site->id, $patient->id]) }}">Pasien</a>
                 </li>
                 <li class="breadcrumb-item active">Detail Entry</li>
             </ol>
@@ -18,52 +18,44 @@
         <div class="row">
             <div class="col-lg-12">
 
-                <!-- Info Header -->
+                <!-- Header -->
                 <div class="card mb-3">
                     <div class="card-body">
                         <h4 class="card-title">Detail Entry</h4>
                         <p><strong>Kode Entry:</strong> {{ $entry->entry_key }}</p>
-                        <p><strong>Kategori:</strong> {{ $entry->category->category_main }} -
-                            {{ $entry->category->category_sub }}</p>
+                        <p><strong>Kategori:</strong> {{ $entry->category->name ?? '-' }}</p>
                         <p><strong>Label:</strong> {{ $entry->entry_label ?? '-' }}</p>
                         <p><strong>Tanggal:</strong> {{ $entry->entry_date }} {{ $entry->entry_time }}</p>
                     </div>
                     <div class="card-footer text-muted d-flex justify-content-between">
                         <div>
                             <small>Dibuat oleh: <b>{{ $entry->createdBy->name ?? '-' }}</b></small><br>
-                            <small>Tgl. Buat: {{ $entry->created_at->format('M d, Y H:i:s') }}</small>
+                            <small>Tgl. Buat: {{ $entry->created_at->format('d M Y H:i') }}</small>
                         </div>
                         <div class="text-end">
                             <small>Update oleh:
                                 <b>{{ optional(App\Models\User::find($entry->last_modified_by))->name ?? '-' }}</b></small><br>
-                            <small>Tgl. Update: {{ $entry->updated_at->format('M d, Y H:i:s') }}</small>
+                            <small>Tgl. Update: {{ $entry->updated_at->format('d M Y H:i') }}</small>
                         </div>
                     </div>
                 </div>
 
                 <!-- Tabs -->
                 <ul class="nav nav-tabs" id="entryTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general"
-                            type="button" role="tab">Informasi Umum</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="operation-tab" data-bs-toggle="tab" data-bs-target="#operation"
-                            type="button" role="tab">Operasi</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="waitlist-tab" data-bs-toggle="tab" data-bs-target="#waitlist"
-                            type="button" role="tab">Waitlist</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="attachments-tab" data-bs-toggle="tab" data-bs-target="#attachments"
-                            type="button" role="tab">Lampiran</button>
-                    </li>
+                    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#general"
+                            type="button">Umum</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#operation"
+                            type="button">Operasi</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#waitlist"
+                            type="button">Waitlist</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#attachments"
+                            type="button">Lampiran</button></li>
                 </ul>
 
                 <div class="tab-content mt-3">
-                    <!-- General Info -->
-                    <div class="tab-pane fade show active" id="general" role="tabpanel">
+
+                    {{-- General Info --}}
+                    <div class="tab-pane fade show active" id="general">
                         <div class="card">
                             <div class="card-body">
                                 <p><strong>Deskripsi:</strong> {{ $entry->entry_description ?? '-' }}</p>
@@ -75,8 +67,8 @@
                         </div>
                     </div>
 
-                    <!-- Operation Info -->
-                    <div class="tab-pane fade" id="operation" role="tabpanel">
+                    {{-- Operation Info --}}
+                    <div class="tab-pane fade" id="operation">
                         <div class="card">
                             <div class="card-body">
                                 <p><strong>Tanggal Operasi:</strong> {{ $entry->surgical_date_id ?? '-' }}</p>
@@ -86,9 +78,8 @@
                                 <p><strong>Operator 2:</strong> {{ $entry->operator2->name ?? '-' }}</p>
                                 <p><strong>Operator 3:</strong> {{ $entry->operator3->name ?? '-' }}</p>
                                 <p><strong>Operator 4:</strong> {{ $entry->operator4->name ?? '-' }}</p>
-                                <p><strong>Diagnosis Pre-Operatif:</strong> {{ $entry->preoperative_diagnosis ?? '-' }}</p>
-                                <p><strong>Diagnosis Intra-Operatif:</strong> {{ $entry->intraoperative_diagnosis ?? '-' }}
-                                </p>
+                                <p><strong>Diagnosis Pre-Op:</strong> {{ $entry->preoperative_diagnosis ?? '-' }}</p>
+                                <p><strong>Diagnosis Intra-Op:</strong> {{ $entry->intraoperative_diagnosis ?? '-' }}</p>
                                 <p><strong>Tindakan:</strong> {{ $entry->surgical_procedure ?? '-' }}</p>
                                 <p><strong>Perkiraan Kehilangan Darah:</strong>
                                     {{ $entry->estimated_blood_loss ? $entry->estimated_blood_loss . ' ml' : '-' }}</p>
@@ -97,8 +88,8 @@
                         </div>
                     </div>
 
-                    <!-- Waitlist Info -->
-                    <div class="tab-pane fade" id="waitlist" role="tabpanel">
+                    {{-- Waitlist Info --}}
+                    <div class="tab-pane fade" id="waitlist">
                         <div class="card">
                             <div class="card-body">
                                 <p><strong>Status:</strong> {{ $entry->waitlist_status ?? '-' }}</p>
@@ -123,36 +114,50 @@
                         </div>
                     </div>
 
-                    <!-- Attachments -->
-                    <div class="tab-pane fade" id="attachments" role="tabpanel">
+                    {{-- Attachments --}}
+                    <div class="tab-pane fade" id="attachments">
                         <div class="card">
                             <div class="card-body">
-                                @if ($entry->log_image_files)
+                                @if ($entry->image_file)
                                     <p><strong>Gambar:</strong></p>
                                     <div class="d-flex flex-wrap">
-                                        {{-- @foreach (json_decode($entry->log_image_files, true) as $img)
-                                            <img src="{{ asset($img) }}" class="img-thumbnail me-2 mb-2" width="150">
-                                        @endforeach --}}
+                                        <a href="{{ asset('storage/' . $entry->image_file) }}"
+                                            data-lightbox="entry-images">
+                                            <img src="{{ asset('storage/' . $entry->image_file) }}"
+                                                class="img-thumbnail me-2 mb-2" style="max-width: 200px;">
+                                        </a>
                                     </div>
                                 @endif
 
-                                @if ($entry->log_document_files)
+                                @if ($entry->document_file)
                                     <p><strong>Dokumen:</strong></p>
                                     <ul>
-                                        {{-- @foreach (json_decode($entry->log_document_files, true) as $doc)
-                                            <li><a href="{{ asset($doc) }}" target="_blank">{{ basename($doc) }}</a>
-                                            </li>
-                                        @endforeach --}}
+                                        <li>
+                                            <a href="{{ asset('storage/' . $entry->document_file) }}" target="_blank">
+                                                <i class="bi bi-file-earmark-text"></i>
+                                                {{ basename($entry->document_file) }}
+                                            </a>
+                                        </li>
                                     </ul>
+                                @endif
+
+                                @if (!$entry->image_file && !$entry->document_file)
+                                    <p>-</p>
                                 @endif
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <a href="{{ route('patients.show', ['project' => $project->id, 'site' => $site->id, 'patient' => $patient->id]) }}"
+                <a href="{{ route('patients.show', [$project->id, $site->id, $patient->id]) }}"
                     class="btn btn-secondary mt-3">Kembali ke Pasien</a>
             </div>
         </div>
     </section>
 @endsection
+
+@push('scripts')
+    {{-- Lightbox2 (gunakan CDN) --}}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+@endpush
