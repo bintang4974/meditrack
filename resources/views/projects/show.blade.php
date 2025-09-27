@@ -10,24 +10,21 @@
                 <li class="breadcrumb-item active">{{ $project->name }}</li>
             </ol>
         </nav>
-    </div><!-- End Page Title -->
+    </div>
 
     <section class="section">
-        <div class="card">
+        <div class="card mb-3">
             <div class="card-body">
-                <div class="card-title">
-                    <h4>{{ $project->name }}</h4>
-                </div>
-                <h5>Deskripsi</h5>
+                <h4 class="card-title">{{ $project->name }}</h4>
                 <p>{{ $project->description }}</p>
                 <p><strong>Kode:</strong> {{ $project->project_code }}</p>
                 <p><strong>Voucher:</strong> {{ $project->voucher_code }}</p>
             </div>
         </div>
 
-        {{-- tombol join request hanya untuk owner --}}
+        {{-- Tombol join request hanya untuk owner --}}
         @if ($project->owner_id === auth()->id())
-            <a href="{{ route('projects.joinRequests', $project->id) }}" class="btn btn-warning mt-3">
+            <a href="{{ route('projects.joinRequests', $project->id) }}" class="btn btn-warning mb-4">
                 Lihat Permintaan Join
                 @if ($pendingCount > 0)
                     <span class="badge bg-danger">{{ $pendingCount }}</span>
@@ -35,29 +32,43 @@
             </a>
         @endif
 
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4>Daftar Rumah Sakit</h4>
-            <a href="{{ route('sites.create', $project->id) }}" class="btn btn-primary">+ Tambah Rumah Sakit</a>
-        </div>
-
+        {{-- Card Menu --}}
         <div class="row">
-            @forelse($project->sites as $site)
-                <div class="col-md-4">
-                    <div class="card shadow-sm mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ $site->name }}</h5>
-                            <p class="card-text">{{ $site->location }}</p>
-                            <a href="{{ route('sites.show', [$project->id, $site->id]) }}" class="btn btn-sm btn-info">
-                                Lihat Pasien
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            @empty
-                <div class="col-12 text-center">
-                    <p>Belum ada rumah sakit pada project ini.</p>
-                </div>
-            @endforelse
+            <div class="col-md-3">
+                <a href="{{ route('sites.index', $project->id) }}"
+                    class="card text-center shadow-sm p-3 text-decoration-none">
+                    <h5>🏥 Rumah Sakit</h5>
+                </a>
+            </div>
+
+            <div class="col-md-3">
+                {{-- <a href="{{ route('doctors.index', $project->id) }}" --}}
+                <a href=""
+                    class="card text-center shadow-sm p-3 text-decoration-none">
+                    <h5>👨‍⚕️ Dokter</h5>
+                </a>
+            </div>
+            <div class="col-md-3">
+                {{-- <a href="{{ route('tags.index', $project->id) }}" --}}
+                <a href=""
+                    class="card text-center shadow-sm p-3 text-decoration-none">
+                    <h5>🏷️ Tags</h5>
+                </a>
+            </div>
+            <div class="col-md-3">
+                {{-- <a href="{{ route('labels.index', $project->id) }}" --}}
+                <a href=""
+                    class="card text-center shadow-sm p-3 text-decoration-none">
+                    <h5>🔖 Labels</h5>
+                </a>
+            </div>
+            <div class="col-md-3 mt-3">
+                {{-- <a href="{{ route('categories.index', $project->id) }}" --}}
+                <a href=""
+                    class="card text-center shadow-sm p-3 text-decoration-none">
+                    <h5>📂 Categories</h5>
+                </a>
+            </div>
         </div>
     </section>
 @endsection

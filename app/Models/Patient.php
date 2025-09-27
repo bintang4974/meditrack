@@ -24,4 +24,9 @@ class Patient extends Model
     {
         return $this->hasMany(Entry::class);
     }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'patient_tag');
+    }
 }

@@ -11,12 +11,12 @@ class SiteController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Project $project)
     {
-        // $pageTitle = "Daftar Rumah Sakit";
-        // $sites = Site::latest()->get();
+        $pageTitle = "Daftar Rumah Sakit";
+        $sites = $project->sites;
 
-        // return view('sites.index', compact('sites', 'pageTitle'));
+        return view('sites.index', compact('project', 'sites', 'pageTitle'));
     }
 
     /**
