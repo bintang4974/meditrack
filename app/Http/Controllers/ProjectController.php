@@ -55,7 +55,13 @@ class ProjectController extends Controller
     {
         $pageTitle = "Detail Project";
         $project->load('sites');
-        return view('projects.show', compact('project', 'pageTitle'));
+
+        $pendingCount = 0;
+        if ($project->owner_id === auth()->id()) {
+            $pendingCount = $project->pendingJoinRequests()->count();
+        }
+
+        return view('projects.show', compact('project', 'pageTitle', 'pendingCount'));
     }
 
     public function search(Request $request)

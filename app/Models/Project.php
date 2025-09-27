@@ -43,4 +43,9 @@ class Project extends Model
     {
         return $this->hasMany(ProjectJoinRequest::class);
     }
+
+    public function pendingJoinRequests()
+    {
+        return $this->joinRequests()->where('status', 'pending');
+    }
 }
