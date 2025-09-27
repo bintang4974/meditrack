@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             EntrySeeder::class,
             EncounterSeeder::class,
             TagLabelSeeder::class,
+            DoctorSiteSeeder::class,
         ]);
 
         // $this->call(ProjectSeeder::class);
