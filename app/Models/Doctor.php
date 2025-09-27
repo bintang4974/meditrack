@@ -8,9 +8,11 @@ class Doctor extends Model
 {
     protected $guarded = [];
 
-    public function site()
+    public function sites()
     {
-        return $this->belongsTo(Site::class);
+        return $this->belongsToMany(Site::class, 'doctor_sites')
+            ->withPivot(['status', 'status_updated_at', 'deactivation_note'])
+            ->withTimestamps();
     }
 
     public function entriesAsOperator1()

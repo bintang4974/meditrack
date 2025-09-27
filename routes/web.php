@@ -46,6 +46,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/projects/{project}/sites/{site}/patients/{patient}/entries/{entry}', [EntryController::class, 'show'])->name('entries.show');
     Route::get('/entries/form-fields/{category}', [EntryController::class, 'formFields'])->name('entries.formFields');
 
+    // Doctors (nested di dalam project)
+    Route::get('/projects/{project}/doctors', [DoctorController::class, 'index'])->name('doctors.index');
+    Route::get('/projects/{project}/doctors/create', [DoctorController::class, 'create'])->name('doctors.create');
+    Route::post('/projects/{project}/doctors', [DoctorController::class, 'store'])->name('doctors.store');
+    Route::get('/projects/{project}/doctors/{doctor}/edit', [DoctorController::class, 'edit'])->name('doctors.edit');
+    Route::put('/projects/{project}/doctors/{doctor}', [DoctorController::class, 'update'])->name('doctors.update');
+    Route::delete('/projects/{project}/doctors/{doctor}', [DoctorController::class, 'destroy'])->name('doctors.destroy');
+
+
     Route::get('/sub-categories/{category}', [CategoryController::class, 'subCategories']);
     Route::get('/categories/{category}/sub-categories', [EntryController::class, 'getSubCategories'])->name('categories.subCategories');
 

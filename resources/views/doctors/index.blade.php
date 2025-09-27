@@ -3,64 +3,57 @@
 @section('content')
     <div class="pagetitle">
         <h1>{{ $pageTitle }}</h1>
-        <nav>
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                <li class="breadcrumb-item">Tables</li>
-                <li class="breadcrumb-item active">Data</li>
-            </ol>
-        </nav>
-    </div><!-- End Page Title -->
+    </div>
 
     <section class="section">
-        <div class="row">
-            <div class="col-lg-12">
+        <a href="{{ route('doctors.create', $project->id) }}" class="btn btn-primary mb-3">+ Tambah Dokter</a>
 
-                @if (session('success'))
-                    <div class="alert alert-success">{{ session('success') }}</div>
-                @endif
-
-                <div class="card">
-                    <div class="card-body">
-                        <div class="card-title"><a href="{{ route('doctors.create') }}" class="btn btn-primary mb-3"><i
-                                    class="bi bi-bookmark-plus-fill"></i> Tambah</a></div>
-
-                        <!-- Table with stripped rows -->
-                        <table class="table datatable">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Nama</th>
-                                    <th>Spesialisasi</th>
-                                    <th>Site</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($doctors as $doctor)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $doctor->name }}</td>
-                                        <td>{{ $doctor->specialization ?? '-' }}</td>
-                                        <td>{{ $doctor->site->name }}</td>
-                                        <td>
-                                            <a href="{{ route('doctors.edit', $doctor->id) }}"
-                                                class="btn btn-sm btn-warning">Edit</a>
-                                            <form action="{{ route('doctors.destroy', $doctor->id) }}" method="POST"
-                                                style="display:inline-block">
-                                                @csrf @method('DELETE')
-                                                <button class="btn btn-sm btn-danger"
-                                                    onclick="return confirm('Yakin hapus doctor ini?')">Hapus</button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                        <!-- End Table with stripped rows -->
-                    </div>
-                </div>
-            </div>
-        </div>
+        <table class="table datatable table-bordered table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Nama</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Spesialisasi</th>
+                    <th>Status</th>
+                    <th>Rumah Sakit</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($doctors as $doctor)
+                    <tr>
+                        <td>{{ $doctor->name }}</td>
+                        <td>{{ $doctor->email }}</td>
+                        <td>{{ ucfirst($doctor->role) }}</td>
+                        <td>{{ $doctor->specialty ?? '-' }}</td>
+                        <td>
+                            <span class="badge {{ $doctor->status == 'active' ? 'bg-success' : 'bg-secondary' }}">
+                                {{ $doctor->status }}
+                            </span>
+                        </td>
+                        <td>
+                            @foreach ($doctor->sites as $site)
+                                <span class="badge bg-info">{{ $site->name }}</span>
+                            @endforeach
+                        </td>
+                        <td>
+                            <a href="{{ route('doctors.edit', [$project->id, $doctor->id]) }}"
+                                class="btn btn-sm btn-warning">Edit</a>
+                            <form action="{{ route('doctors.destroy', [$project->id, $doctor->id]) }}" method="POST"
+                                class="d-inline">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-danger"
+                                    onclick="return confirm('Yakin?')">Hapus</button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="7" class="text-center">Belum ada dokter</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
     </section>
 @endsection

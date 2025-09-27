@@ -42,8 +42,7 @@
             </div>
 
             <div class="col-md-3">
-                {{-- <a href="{{ route('doctors.index', $project->id) }}" --}}
-                <a href=""
+                <a href="{{ route('doctors.index', $project->id) }}"
                     class="card text-center shadow-sm p-3 text-decoration-none">
                     <h5>👨‍⚕️ Dokter</h5>
                 </a>
