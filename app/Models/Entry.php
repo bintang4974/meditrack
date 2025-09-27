@@ -69,4 +69,9 @@ class Entry extends Model
     {
         return $this->belongsTo(Patient::class);
     }
+
+    public function labels()
+    {
+        return $this->belongsToMany(Label::class, 'entry_label');
+    }
 }

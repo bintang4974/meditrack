@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             DoctorSeeder::class,
             EntrySeeder::class,
             EncounterSeeder::class,
+            TagLabelSeeder::class,
         ]);
 
         // $this->call(ProjectSeeder::class);

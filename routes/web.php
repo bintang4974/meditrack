@@ -32,6 +32,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/projects/{project}/join-requests/{joinRequest}/reject', [ProjectController::class, 'rejectRequest'])->name('projects.rejectRequest');
     Route::resource('projects', ProjectController::class)->only(['index', 'create', 'store', 'show']);
     // Sites (nested di dalam project)
+    Route::get('/projects/{project}/sites', [SiteController::class, 'index'])->name('sites.index');
     Route::get('/projects/{project}/sites/create', [SiteController::class, 'create'])->name('sites.create');
     Route::post('/projects/{project}/sites', [SiteController::class, 'store'])->name('sites.store');
     Route::get('/projects/{project}/sites/{site}', [SiteController::class, 'show'])->name('sites.show');

@@ -5,63 +5,37 @@
         <h1>{{ $pageTitle }}</h1>
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                <li class="breadcrumb-item">Tables</li>
-                <li class="breadcrumb-item active">Data</li>
+                <li class="breadcrumb-item"><a href="{{ route('projects.index') }}">Project</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('projects.show', $project->id) }}">{{ $project->name }}</a></li>
+                <li class="breadcrumb-item active">Rumah Sakit</li>
             </ol>
         </nav>
-    </div><!-- End Page Title -->
+    </div>
 
     <section class="section">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4>Daftar Rumah Sakit</h4>
+            <a href="{{ route('sites.create', $project->id) }}" class="btn btn-primary">+ Tambah Rumah Sakit</a>
+        </div>
+
         <div class="row">
-            <div class="col-lg-12">
-
-                @if (session('success'))
-                    <div class="alert alert-success">{{ session('success') }}</div>
-                @endif
-
-                <div class="card">
-                    <div class="card-body">
-                        <div class="card-title"><a href="{{ route('sites.create') }}" class="btn btn-primary mb-3"><i class="bi bi-bookmark-plus-fill"></i> Tambah</a></div>
-
-                        <!-- Table with stripped rows -->
-                        <table class="table datatable">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Nama</th>
-                                    <th>Lokasi</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($sites as $site)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $site->name }}</td>
-                                        <td>{{ $site->location }}</td>
-                                        <td>
-                                            <a href="{{ route('sites.edit', $site->id) }}"
-                                                class="btn btn-sm btn-warning"><i class="bi bi-pencil-square"></i> Edit</a>
-                                            <form action="{{ route('sites.destroy', $site->id) }}" method="POST"
-                                                style="display:inline-block;">
-                                                @csrf @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger"
-                                                    onclick="return confirm('Yakin hapus data ini?')"><i class="bi bi-trash"></i> Hapus</button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="3" class="text-center">Belum ada rumah sakit.</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                        <!-- End Table with stripped rows -->
+            @forelse($sites as $site)
+                <div class="col-md-4">
+                    <div class="card shadow-sm mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ $site->name }}</h5>
+                            <p class="card-text">{{ $site->location }}</p>
+                            <a href="{{ route('sites.show', [$project->id, $site->id]) }}" class="btn btn-sm btn-info">
+                                Lihat Pasien
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
+            @empty
+                <div class="col-12 text-center">
+                    <p>Belum ada rumah sakit pada project ini.</p>
+                </div>
+            @endforelse
         </div>
     </section>
 @endsection

@@ -20,6 +20,7 @@ class PatientSeeder extends Seeder
                 'rekam_medis' => 'RM001',
                 'name' => 'Ahmad Fikri',
                 'dob' => '1990-05-12',
+                'diagnosis' => 'cancer ovarium',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
@@ -28,6 +29,7 @@ class PatientSeeder extends Seeder
                 'rekam_medis' => 'RM002',
                 'name' => 'Dwi Sulistyorini',
                 'dob' => '1985-12-01',
+                'diagnosis' => 'cancer ovarium',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]
