@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Doctor, Entry, Patient, Project, Site};
+use App\Models\{Doctor, Entry, Patient, Project, ProjectJoinRequest, Site};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -33,7 +33,7 @@ class DashboardController extends Controller
                 ->orderBy('month')
                 ->pluck('total', 'month');
 
-            $recentEntries = Entry::with(['category','createdBy'])
+            $recentEntries = Entry::with(['category', 'createdBy'])
                 ->latest()
                 ->take(5)
                 ->get();
@@ -56,7 +56,12 @@ class DashboardController extends Controller
                 ->take(5)
                 ->get();
 
-            return view('dashboard.doctor', compact('pageTitle', 'stats', 'projects', 'entries', 'upcoming'));
+            // pending requests hanya kalau dia owner project
+            $pendingRequests = ProjectJoinRequest::whereHas('project', function ($q) use ($user) {
+                $q->where('owner_id', $user->id);
+            })->where('status', 'pending')->count();
+
+            return view('dashboard.doctor', compact('pageTitle', 'stats', 'projects', 'entries', 'upcoming', 'pendingRequests'));
         }
     }
 }

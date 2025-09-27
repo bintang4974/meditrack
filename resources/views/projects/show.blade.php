@@ -29,6 +29,9 @@
         @if ($project->owner_id === auth()->id())
             <a href="{{ route('projects.joinRequests', $project->id) }}" class="btn btn-warning mt-3">
                 Lihat Permintaan Join
+                @if ($pendingCount > 0)
+                    <span class="badge bg-danger">{{ $pendingCount }}</span>
+                @endif
             </a>
         @endif
 
