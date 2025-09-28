@@ -10,6 +10,6 @@ class Tag extends Model
 
     public function patients()
     {
-        return $this->belongsToMany(Patient::class, 'patient_tag');
+        return $this->belongsToMany(Patient::class, 'patient_tags')->withTimestamps();
     }
 }

@@ -7,7 +7,8 @@ use App\Http\Controllers\{
     EntryController,
     PatientController,
     ProjectController,
-    SiteController
+    SiteController,
+    TagController
 };
 use Illuminate\Support\Facades\Route;
 
@@ -59,4 +60,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/categories/{category}/sub-categories', [EntryController::class, 'getSubCategories'])->name('categories.subCategories');
 
     Route::resource('entries', EntryController::class)->only(['index']);
+
+    Route::get('/tags', [TagController::class, 'index'])->name('tags.index');
+    Route::get('/tags/{tag}', [TagController::class, 'show'])->name('tags.show');
 });
