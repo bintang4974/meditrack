@@ -33,11 +33,29 @@ class EntryController extends Controller
     public function create(Project $project, Site $site, Patient $patient)
     {
         $pageTitle = 'Tambah Entry';
-        // $categories = Category::where('project_key', $project->project_code)->get();
-        // $categories = Category::all();
         $categories = Category::with('subCategories')->get();
 
-        return view('entry.create', compact('pageTitle', 'project', 'site', 'patient', 'categories'));
+        // Dokter aktif di rumah sakit ini
+        $doctors = $site->doctors()
+            ->where('doctors.status', 'active')
+            ->wherePivot('status', 'active')   // cek pivot juga
+            ->get();
+        // $doctors = $site->doctors()
+        //     ->where('doctors.status', 'active') // prefix tabel doctors
+        //     ->get();
+
+        // Supervisor aktif saja
+        $supervisors = $site->doctors()
+            ->where('doctors.status', 'active')
+            ->where('doctors.role', 'supervisor')
+            ->wherePivot('status', 'active')   // cek pivot juga
+            ->get();
+        // $supervisors = $site->doctors()
+        //     ->where('doctors.status', 'active') // prefix tabel doctors
+        //     ->where('doctors.role', 'supervisor')
+        //     ->get();
+
+        return view('entry.create', compact('pageTitle', 'project', 'site', 'patient', 'categories', 'doctors', 'supervisors'));
     }
 
     public function getSubCategories(Category $category)
