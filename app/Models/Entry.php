@@ -27,33 +27,41 @@ class Entry extends Model
     {
         return $this->belongsTo(Doctor::class, 'operator_1');
     }
+
     public function operator2()
     {
         return $this->belongsTo(Doctor::class, 'operator_2');
     }
+
     public function operator3()
     {
         return $this->belongsTo(Doctor::class, 'operator_3');
     }
+
     public function operator4()
     {
         return $this->belongsTo(Doctor::class, 'operator_4');
-    }
-
-    public function encounter()
-    {
-        return $this->belongsTo(Encounter::class);
-    }
-
-    public function category()
-    {
-        return $this->belongsTo(Category::class);
     }
 
     public function supervisor()
     {
         return $this->belongsTo(Doctor::class, 'entry_supervisor');
     }
+
+    // public function encounter()
+    // {
+    //     return $this->belongsTo(Encounter::class);
+    // }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    // public function supervisor()
+    // {
+    //     return $this->belongsTo(Doctor::class, 'entry_supervisor');
+    // }
 
     public function metadata()
     {

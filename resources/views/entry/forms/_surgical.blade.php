@@ -32,7 +32,12 @@
 @for ($i = 1; $i <= 4; $i++)
     <div class="mb-3">
         <label>Operator {{ $i }}</label>
-        <input type="text" name="operator_{{ $i }}" class="form-control">
+        <select name="operator_{{ $i }}" class="form-control">
+            <option value="">-- Pilih Dokter --</option>
+            @foreach ($doctors as $doc)
+                <option value="{{ $doc->id }}">{{ $doc->name }} ({{ ucfirst($doc->role) }})</option>
+            @endforeach
+        </select>
     </div>
 @endfor
 
@@ -63,7 +68,12 @@
 
 <div class="mb-3">
     <label>Supervisor</label>
-    <input type="text" name="entry_supervisor" class="form-control">
+    <select name="entry_supervisor" class="form-control">
+        <option value="">-- Pilih Supervisor --</option>
+        @foreach ($supervisors as $sup)
+            <option value="{{ $sup->id }}">{{ $sup->name }}</option>
+        @endforeach
+    </select>
 </div>
 
 <div class="mb-3">

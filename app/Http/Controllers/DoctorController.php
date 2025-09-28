@@ -91,7 +91,10 @@ class DoctorController extends Controller
         $pageTitle = "Edit Dokter";
         $sites = $project->sites;
 
-        return view('doctors.edit', compact('project', 'doctor', 'sites', 'pageTitle'));
+        // Ambil id site yang sudah dikaitkan aktif
+        $doctorSiteStatuses = $doctor->sites->pluck('pivot.status', 'id')->toArray();
+
+        return view('doctors.edit', compact('project', 'doctor', 'sites', 'pageTitle', 'doctorSiteStatuses'));
     }
 
     public function update(Request $request, Project $project, Doctor $doctor)
@@ -102,33 +105,42 @@ class DoctorController extends Controller
             'role'  => 'required|in:doctor,supervisor',
             'specialty' => 'nullable|string|max:255',
             'notes' => 'nullable|string',
-            'sites' => 'required|array',
+            'status' => 'required|in:active,inactive',
+            'sites' => 'nullable|array',
             'sites.*' => 'exists:sites,id'
         ]);
 
+        // update data dokter
         $doctor->update([
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
             'specialty' => $request->specialty,
             'notes' => $request->notes,
-            'last_modified_by' => Auth::id(),
+            'status' => $request->status,
+            'status_updated_at' => now(),
+            'last_modified_by' => auth()->id(),
         ]);
 
+        // Update relasi rumah sakit
         $syncData = [];
-        foreach ($request->sites as $siteId) {
-            $syncData[$siteId] = [
-                'status' => 'active',
-                'status_updated_at' => now(),
-                'deactivation_note' => null,
-            ];
+        if ($request->filled('sites')) {
+            foreach ($request->sites as $siteId) {
+                $syncData[$siteId] = [
+                    'status' => 'active',
+                    'status_updated_at' => now(),
+                    'deactivation_note' => null,
+                ];
+            }
         }
 
+        // sync → rumah sakit yg dicentang = active, yg tidak = detach
         $doctor->sites()->sync($syncData);
 
         return redirect()->route('doctors.index', $project->id)
-            ->with('success', 'Dokter berhasil diperbarui.');
+            ->with('success', 'Data dokter berhasil diperbarui.');
     }
+
 
     public function destroy(Project $project, Doctor $doctor)
     {
