@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Patient;
 use App\Models\Project;
 use App\Models\Site;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 
 class PatientController extends Controller
@@ -26,7 +27,9 @@ class PatientController extends Controller
     public function create(Project $project, Site $site)
     {
         $pageTitle = "Tambah Pasien";
-        return view('patients.create', compact('pageTitle', 'project', 'site'));
+        $tags = Tag::where('status', 'active')->get();
+
+        return view('patients.create', compact('pageTitle', 'project', 'site', 'tags'));
     }
 
     /**
@@ -38,14 +41,20 @@ class PatientController extends Controller
             'rekam_medis' => 'required|string|max:50',
             'name' => 'required|string|max:255',
             'dob' => 'nullable|date',
+            'tags' => 'nullable|array',
+            'tags.*' => 'exists:tags,id'
         ]);
 
-        Patient::create([
+        $patient = Patient::create([
             'site_id' => $site->id,
             'rekam_medis' => $request->rekam_medis,
             'name' => $request->name,
             'dob' => $request->dob,
         ]);
+
+        if ($request->filled('tags')) {
+            $patient->tags()->attach($request->tags);
+        }
 
         return redirect()->route('sites.show', [$project->id, $site->id])
             ->with('success', 'Pasien berhasil ditambahkan.');

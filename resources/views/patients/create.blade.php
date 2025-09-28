@@ -46,6 +46,21 @@
                                     <div class="text-danger"><small>{{ $message }}</small></div>
                                 @enderror
                             </div>
+                            <div class="col-12">
+                                <label for="tags" class="form-label">Tags</label>
+                                <div class="row">
+                                    @foreach ($tags as $tag)
+                                        <div class="col-md-4">
+                                            <div class="form-check">
+                                                <input type="checkbox" name="tags[]" value="{{ $tag->id }}"
+                                                    class="form-check-input" id="tag_{{ $tag->id }}">
+                                                <label class="form-check-label"
+                                                    for="tag_{{ $tag->id }}">{{ $tag->name }}</label>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
                             <div class="text-center">
                                 <button type="submit" class="btn btn-primary"><i class="bi bi-floppy"></i> Submit</button>
                                 <button type="reset" class="btn btn-danger"><i class="bi bi-x-octagon"></i> Reset</button>
