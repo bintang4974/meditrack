@@ -17,7 +17,7 @@ class Site extends Model
     // 🔹 Relasi ke doctors (jika dokter ditugaskan di site ini)
     public function doctors()
     {
-        return $this->belongsToMany(Doctor::class, 'doctor_site')
+        return $this->belongsToMany(Doctor::class, 'doctor_sites')
             ->withPivot(['status', 'status_updated_at', 'deactivation_note'])
             ->withTimestamps();
     }
