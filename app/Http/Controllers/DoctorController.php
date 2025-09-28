@@ -39,13 +39,15 @@ class DoctorController extends Controller
      */
     public function store(Request $request, Project $project)
     {
+        // dd($project->id, $request->all());
         $request->validate([
             'name'  => 'required|string|max:255',
             'email' => 'required|email|unique:doctors,email',
             'role'  => 'required|in:doctor,supervisor',
             'specialty' => 'nullable|string|max:255',
             'notes' => 'nullable|string',
-            'sites' => 'required|array',
+            'sites' => 'required|array|min:1',
+            'sites.*' => 'exists:sites,id'
         ]);
 
         $doctor = Doctor::create([
@@ -60,7 +62,17 @@ class DoctorController extends Controller
             'last_modified_by' => Auth::id(),
         ]);
 
-        $doctor->sites()->attach($request->sites);
+        // attach sites dengan pivot tambahan default
+        $syncData = [];
+        foreach ($request->sites as $siteId) {
+            $syncData[$siteId] = [
+                'status' => 'active',
+                'status_updated_at' => now(),
+                'deactivation_note' => null,
+            ];
+        }
+
+        $doctor->sites()->sync($syncData);
 
         return redirect()->route('doctors.index', $project->id)
             ->with('success', 'Dokter berhasil ditambahkan.');
@@ -91,7 +103,7 @@ class DoctorController extends Controller
             'specialty' => 'nullable|string|max:255',
             'notes' => 'nullable|string',
             'sites' => 'required|array',
-            'status' => 'required|in:active,inactive',
+            'sites.*' => 'exists:sites,id'
         ]);
 
         $doctor->update([
@@ -100,15 +112,22 @@ class DoctorController extends Controller
             'role' => $request->role,
             'specialty' => $request->specialty,
             'notes' => $request->notes,
-            'status' => $request->status,
-            'status_updated_at' => now(),
             'last_modified_by' => Auth::id(),
         ]);
 
-        $doctor->sites()->sync($request->sites);
+        $syncData = [];
+        foreach ($request->sites as $siteId) {
+            $syncData[$siteId] = [
+                'status' => 'active',
+                'status_updated_at' => now(),
+                'deactivation_note' => null,
+            ];
+        }
+
+        $doctor->sites()->sync($syncData);
 
         return redirect()->route('doctors.index', $project->id)
-            ->with('success', 'Data dokter berhasil diperbarui.');
+            ->with('success', 'Dokter berhasil diperbarui.');
     }
 
     public function destroy(Project $project, Doctor $doctor)
