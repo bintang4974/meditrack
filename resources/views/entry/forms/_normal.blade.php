@@ -43,3 +43,22 @@
     <label>Tingkat Kompetensi</label>
     <input type="text" name="competence_level" class="form-control">
 </div>
+
+{{-- Pilih Labels --}}
+<div class="mb-3">
+    <label>Pilih Labels</label>
+    <div class="row">
+        @foreach ($labels as $label)
+            <div class="col-md-3">
+                <div class="form-check">
+                    <input type="checkbox" name="labels[]" value="{{ $label->id }}" class="form-check-input"
+                        id="label_{{ $label->id }}">
+                    <label class="form-check-label" for="label_{{ $label->id }}">
+                        {{ $label->name }}
+                    </label>
+                </div>
+            </div>
+        @endforeach
+    </div>
+    <small class="text-muted">Pilih satu atau lebih label untuk entry ini</small>
+</div>

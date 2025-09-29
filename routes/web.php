@@ -5,6 +5,7 @@ use App\Http\Controllers\{
     DashboardController,
     DoctorController,
     EntryController,
+    LabelController,
     PatientController,
     ProjectController,
     SiteController,
@@ -61,7 +62,13 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('entries', EntryController::class)->only(['index']);
 
+    // tags
     Route::get('/tags', [TagController::class, 'index'])->name('tags.index');
     Route::get('/tags/filter', [TagController::class, 'filter'])->name('tags.filter');
     Route::get('/tags/{tag}', [TagController::class, 'show'])->name('tags.show');
+
+    // Labels
+    Route::get('/labels', [LabelController::class, 'index'])->name('labels.index');
+    Route::get('/labels/filter', [LabelController::class, 'filter'])->name('labels.filter');
+    Route::get('/labels/{label}', [LabelController::class, 'show'])->name('labels.show');
 });

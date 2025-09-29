@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Entry;
+use App\Models\Label;
 use App\Models\Patient;
 use App\Models\Project;
 use App\Models\Site;
@@ -38,24 +39,19 @@ class EntryController extends Controller
         // Dokter aktif di rumah sakit ini
         $doctors = $site->doctors()
             ->where('doctors.status', 'active')
-            ->wherePivot('status', 'active')   // cek pivot juga
+            ->wherePivot('status', 'active') //cek pivot juga
             ->get();
-        // $doctors = $site->doctors()
-        //     ->where('doctors.status', 'active') // prefix tabel doctors
-        //     ->get();
 
         // Supervisor aktif saja
         $supervisors = $site->doctors()
             ->where('doctors.status', 'active')
             ->where('doctors.role', 'supervisor')
-            ->wherePivot('status', 'active')   // cek pivot juga
+            ->wherePivot('status', 'active') //cek pivot juga
             ->get();
-        // $supervisors = $site->doctors()
-        //     ->where('doctors.status', 'active') // prefix tabel doctors
-        //     ->where('doctors.role', 'supervisor')
-        //     ->get();
 
-        return view('entry.create', compact('pageTitle', 'project', 'site', 'patient', 'categories', 'doctors', 'supervisors'));
+        $labels = Label::where('status', 'active')->get();
+
+        return view('entry.create', compact('pageTitle', 'project', 'site', 'patient', 'categories', 'doctors', 'supervisors', 'labels'));
     }
 
     public function getSubCategories(Category $category)
@@ -120,6 +116,11 @@ class EntryController extends Controller
 
         // Simpan ke database
         $entry = Entry::create($data);
+
+        // 🔑 Simpan labels
+        if ($request->has('labels')) {
+            $entry->labels()->sync($request->labels);
+        }
 
         return redirect()
             ->route('patients.show', [$project->id, $site->id, $patient->id])

@@ -80,6 +80,6 @@ class Entry extends Model
 
     public function labels()
     {
-        return $this->belongsToMany(Label::class, 'entry_label');
+        return $this->belongsToMany(Label::class, 'entry_labels');
     }
 }

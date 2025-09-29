@@ -54,8 +54,7 @@
                 </a>
             </div>
             <div class="col-md-3">
-                {{-- <a href="{{ route('labels.index', $project->id) }}" --}}
-                <a href=""
+                <a href="{{ route('labels.index', $project->id) }}"
                     class="card text-center shadow-sm p-3 text-decoration-none">
                     <h5>🔖 Labels</h5>
                 </a>
