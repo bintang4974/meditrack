@@ -10,6 +10,6 @@ class Label extends Model
 
     public function entries()
     {
-        return $this->belongsToMany(Entry::class, 'entry_label');
+        return $this->belongsToMany(Entry::class, 'entry_labels')->with('patient.site')->withTimestamps();
     }
 }
