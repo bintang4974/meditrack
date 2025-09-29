@@ -62,5 +62,6 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('entries', EntryController::class)->only(['index']);
 
     Route::get('/tags', [TagController::class, 'index'])->name('tags.index');
+    Route::get('/tags/filter', [TagController::class, 'filter'])->name('tags.filter');
     Route::get('/tags/{tag}', [TagController::class, 'show'])->name('tags.show');
 });
