@@ -32,14 +32,14 @@ class UserSeeder extends Seeder
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
-            // [
-            //     'name' => 'Resident Naufal',
-            //     'email' => 'naufal@gmail.com',
-            //     'password' => Hash::make('12345678'),
-            //     'role' => 'resident',
-            //     'created_at' => Carbon::now(),
-            //     'updated_at' => Carbon::now(),
-            // ],
+            [
+                'name' => 'Dr. Naufal',
+                'email' => 'naufal@gmail.com',
+                'password' => Hash::make('12345678'),
+                'role' => 'doctor',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
         ]);
     }
 }

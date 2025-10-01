@@ -13,12 +13,37 @@
     </div>
 
     <section class="section">
-        <div class="card mb-3">
+        <div class="card mb-3 shadow-sm">
             <div class="card-body">
                 <h4 class="card-title">{{ $project->name }}</h4>
-                <p>{{ $project->description }}</p>
-                <p><strong>Kode:</strong> {{ $project->project_code }}</p>
-                <p><strong>Voucher:</strong> {{ $project->voucher_code }}</p>
+                <p>{{ $project->description ?? '-' }}</p>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Kode Project:</strong> {{ $project->project_code }}</p>
+                        <p><strong>Kode Voucher:</strong> {{ $project->voucher_code }}</p>
+                        <p><strong>Status:</strong>
+                            <span class="badge {{ $project->status === 'active' ? 'bg-success' : 'bg-secondary' }}">
+                                {{ ucfirst($project->status) }}
+                            </span>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Tanggal Mulai:</strong>
+                            {{ $project->start_date ? \Carbon\Carbon::parse($project->start_date)->format('d M Y') : '-' }}
+                        </p>
+                        <p><strong>Tanggal Selesai:</strong>
+                            {{ $project->end_date ? \Carbon\Carbon::parse($project->end_date)->format('d M Y') : '-' }}</p>
+                        <p><strong>Dibuat oleh:</strong> {{ $project->creator->name ?? 'System' }}</p>
+                        <p><strong>Terakhir diubah oleh:</strong> {{ $project->lastModifier->name ?? 'System' }}</p>
+                    </div>
+                </div>
+
+                <hr>
+                <small class="text-muted">
+                    Dibuat pada {{ $project->created_at->format('d M Y H:i') }},
+                    terakhir diperbarui {{ $project->updated_at->format('d M Y H:i') }}
+                </small>
             </div>
         </div>
 
@@ -60,12 +85,13 @@
                 </a>
             </div>
             <div class="col-md-3 mt-3">
-                {{-- <a href="{{ route('categories.index', $project->id) }}" --}}
-                <a href=""
-                    class="card text-center shadow-sm p-3 text-decoration-none">
+                <a href="#" class="card text-center shadow-sm p-3 text-decoration-none">
                     <h5>📂 Categories</h5>
                 </a>
             </div>
         </div>
     </section>
 @endsection
+
+
+{{-- <a href="{{ route('categories.index', $project->id) }}" --}}

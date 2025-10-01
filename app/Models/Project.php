@@ -8,6 +8,16 @@ class Project extends Model
 {
     protected $guarded = [];
 
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function lastModifier()
+    {
+        return $this->belongsTo(User::class, 'last_modified_by');
+    }
+
     // 🔹 Relasi ke user (owner project)
     public function owner()
     {
@@ -26,11 +36,6 @@ class Project extends Model
     public function sites()
     {
         return $this->hasMany(Site::class);
-    }
-
-    public function templates()
-    {
-        return $this->hasMany(Template::class);
     }
 
     // 🔹 Relasi ke entries (1 project bisa punya banyak entries via pasien)

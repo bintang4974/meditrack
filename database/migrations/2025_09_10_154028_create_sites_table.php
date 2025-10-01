@@ -16,6 +16,18 @@ return new class extends Migration
             $table->foreignId('project_id')->constrained()->cascadeOnDelete(); // ✅ relasi ke project
             $table->string('name');
             $table->string('location')->nullable();
+            // Tambahan field
+            $table->text('description')->nullable();
+            $table->string('institution')->nullable(); // nama institusi/rumah sakit induk
+            $table->enum('site_type', ['Hospital', 'Clinic', 'Private Practice', 'Diagnostic Center', 'Medical School', 'Other'])->default('hospital');
+            $table->string('coordinates')->nullable(); // koordinat lat,lon
+
+            $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->timestamp('status_updated_at')->nullable();
+            $table->text('deactivation_note')->nullable();
+
+            $table->foreignId('created_by')->constrained('users');
+            $table->foreignId('last_modified_by')->nullable()->constrained('users');
             $table->timestamps();
         });
     }

@@ -18,6 +18,14 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->date('dob')->nullable();
             $table->text('diagnosis')->nullable();
+            $table->integer('age')->nullable(); // usia pasien
+            $table->string('phone_number')->nullable();
+            $table->text('address')->nullable();
+            $table->text('working_assessment')->nullable(); // penilaian kerja
+            $table->text('context_summary')->nullable();   // ringkasan konteks/riwayat medis
+            // Tambahan audit trail
+            $table->foreignId('created_by')->constrained('users');
+            $table->foreignId('last_modified_by')->nullable()->constrained('users');
             $table->timestamps();
 
             $table->unique(['site_id', 'rekam_medis']);
