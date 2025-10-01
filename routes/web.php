@@ -33,11 +33,16 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/projects/{project}/join-requests/{joinRequest}/approve', [ProjectController::class, 'approveRequest'])->name('projects.approveRequest');
     Route::post('/projects/{project}/join-requests/{joinRequest}/reject', [ProjectController::class, 'rejectRequest'])->name('projects.rejectRequest');
     Route::resource('projects', ProjectController::class)->only(['index', 'create', 'store', 'show']);
+
     // Sites (nested di dalam project)
     Route::get('/projects/{project}/sites', [SiteController::class, 'index'])->name('sites.index');
     Route::get('/projects/{project}/sites/create', [SiteController::class, 'create'])->name('sites.create');
     Route::post('/projects/{project}/sites', [SiteController::class, 'store'])->name('sites.store');
     Route::get('/projects/{project}/sites/{site}', [SiteController::class, 'show'])->name('sites.show');
+    Route::get('/projects/{project}/sites/{site}/edit', [SiteController::class, 'edit'])->name('sites.edit');
+    Route::put('/projects/{project}/sites/{site}', [SiteController::class, 'update'])->name('sites.update');
+    Route::delete('/projects/{project}/sites/{site}', [SiteController::class, 'destroy'])->name('sites.destroy');
+
     // Patients (nested di dalam site → project)
     Route::get('/projects/{project}/sites/{site}/patients/create', [PatientController::class, 'create'])->name('patients.create');
     Route::post('/projects/{project}/sites/{site}/patients', [PatientController::class, 'store'])->name('patients.store');
@@ -46,6 +51,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/projects/{project}/sites/{site}/patients/{patient}', [PatientController::class, 'update'])->name('patients.update');
     Route::delete('/projects/{project}/sites/{site}/patients/{patient}', [PatientController::class, 'destroy'])->name('patients.destroy');
 
+    // Entries
     Route::get('/projects/{project}/sites/{site}/patients/{patient}/entries/create', [EntryController::class, 'create'])->name('entries.create');
     Route::post('/projects/{project}/sites/{site}/patients/{patient}/entries', [EntryController::class, 'store'])->name('entries.store');
     Route::get('/projects/{project}/sites/{site}/patients/{patient}/entries/{entry}', [EntryController::class, 'show'])->name('entries.show');

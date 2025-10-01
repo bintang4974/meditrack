@@ -34,16 +34,33 @@ class SiteController extends Controller
     public function store(Request $request, Project $project)
     {
         $request->validate([
-            'name' => 'required|string',
-            'location' => 'nullable|string',
+            'name'              => 'required|string|max:255',
+            'location'          => 'nullable|string|max:255',
+            'description'       => 'nullable|string',
+            'institution'       => 'nullable|string|max:255',
+            'site_type'         => 'required|in:Hospital,Clinic,Private Practice,Diagnostic Center,Medical School,Other',
+            'coordinates'       => 'nullable|string|max:100',
+            'status'            => 'required|in:active,inactive',
+            'deactivation_note' => 'nullable|string',
         ]);
 
-        $site = $project->sites()->create([
-            'name' => $request->name,
-            'location' => $request->location,
+        $project->sites()->create([
+            'name'              => $request->name,
+            'location'          => $request->location,
+            'description'       => $request->description,
+            'institution'       => $request->institution,
+            'site_type'         => $request->site_type,
+            'coordinates'       => $request->coordinates,
+            'status'            => $request->status,
+            'status_updated_at' => now(),
+            'deactivation_note' => $request->status === 'inactive' ? $request->deactivation_note : null,
+            'created_by'        => auth()->id(),
+            'last_modified_by'  => auth()->id(),
         ]);
 
-        return redirect()->route('projects.show', $project->id)->with('success', 'Rumah sakit berhasil ditambahkan.');
+        return redirect()
+            ->route('projects.show', $project->id)
+            ->with('success', 'Rumah sakit berhasil ditambahkan.');
     }
 
     /**
@@ -59,33 +76,51 @@ class SiteController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Site $site)
+    public function edit(Project $project, Site $site)
     {
-        // $pageTitle = "Edit Rumah Sakit";
-        // return view('sites.edit', compact('site', 'pageTitle'));
+        $pageTitle = "Edit Rumah Sakit";
+        return view('sites.edit', compact('project', 'site', 'pageTitle'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Site $site)
+    public function update(Request $request, Project $project, Site $site)
     {
-        // $request->validate([
-        //     'name'     => 'required|string|max:255',
-        //     'location' => 'nullable|string|max:255',
-        // ]);
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'location' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'institution' => 'nullable|string|max:255',
+            'site_type' => 'required|in:Hospital,Clinic,Private Practice,Diagnostic Center,Medical School,Other',
+            'coordinates' => 'nullable|string',
+            'status' => 'required|in:active,inactive',
+            'deactivation_note' => 'nullable|string',
+        ]);
 
-        // $site->update($request->only('name', 'location'));
+        $site->update([
+            'name' => $request->name,
+            'location' => $request->location,
+            'description' => $request->description,
+            'institution' => $request->institution,
+            'site_type' => $request->site_type,
+            'coordinates' => $request->coordinates,
+            'status' => $request->status,
+            'status_updated_at' => now(),
+            'deactivation_note' => $request->status === 'inactive' ? $request->deactivation_note : null,
+            'last_modified_by' => auth()->id(),
+        ]);
 
-        // return redirect()->route('sites.index')->with('success', 'Rumah sakit berhasil diperbarui!');
+        return redirect()->route('sites.index', $project->id)->with('success', 'Data rumah sakit berhasil diperbarui.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Site $site)
+    public function destroy(Project $project, Site $site)
     {
-        // $site->delete();
-        // return redirect()->route('sites.index')->with('success', 'Rumah sakit berhasil dihapus!');
+        $site->delete();
+
+        return redirect()->route('sites.index', $project->id)->with('success', 'Rumah sakit berhasil dihapus.');
     }
 }

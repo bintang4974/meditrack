@@ -24,10 +24,27 @@
                     <div class="card shadow-sm mb-3">
                         <div class="card-body">
                             <h5 class="card-title">{{ $site->name }}</h5>
-                            <p class="card-text">{{ $site->location }}</p>
-                            <a href="{{ route('sites.show', [$project->id, $site->id]) }}" class="btn btn-sm btn-info">
-                                Lihat Pasien
-                            </a>
+                            <p><strong>Lokasi:</strong> {{ $site->location ?? '-' }}</p>
+                            <p><strong>Institusi:</strong> {{ $site->institution ?? '-' }}</p>
+                            <p><strong>Tipe:</strong> {{ $site->site_type ?? '-' }}</p>
+                            <p><strong>Status:</strong>
+                                <span class="badge {{ $site->status === 'active' ? 'bg-success' : 'bg-secondary' }}">
+                                    {{ ucfirst($site->status) }}
+                                </span>
+                            </p>
+                            <hr>
+                            <div class="d-flex justify-content-between">
+                                <a href="{{ route('sites.show', [$project->id, $site->id]) }}"
+                                    class="btn btn-sm btn-info">👁 Lihat</a>
+                                <a href="{{ route('sites.edit', [$project->id, $site->id]) }}"
+                                    class="btn btn-sm btn-warning">✏️ Edit</a>
+                                <form action="{{ route('sites.destroy', [$project->id, $site->id]) }}" method="POST"
+                                    class="d-inline" onsubmit="return confirm('Yakin ingin menghapus rumah sakit ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger">🗑 Hapus</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
