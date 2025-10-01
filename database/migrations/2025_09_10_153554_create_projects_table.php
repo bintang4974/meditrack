@@ -18,6 +18,12 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->foreignId('owner_id')->constrained('users')->cascadeOnDelete();
+            // Tambahan field
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
+            $table->enum('status', ['active', 'inactive', 'completed'])->default('active');
+            $table->foreignId('created_by')->constrained('users');
+            $table->foreignId('last_modified_by')->nullable()->constrained('users');
             $table->timestamps();
         });
     }

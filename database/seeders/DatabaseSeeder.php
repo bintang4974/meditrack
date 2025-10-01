@@ -22,7 +22,6 @@ class DatabaseSeeder extends Seeder
             PatientSeeder::class,
             DoctorSeeder::class,
             EntrySeeder::class,
-            EncounterSeeder::class,
             TagLabelSeeder::class,
             DoctorSiteSeeder::class,
         ]);

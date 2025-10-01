@@ -29,13 +29,18 @@ class ProjectSeeder extends Seeder
 
         DB::table('projects')->insert([
             [
-                'project_code' => 'PRJAAA0001',
-                'voucher_code' => Str::upper(Str::random(8)),
-                'name' => 'Project Operasi Obgyn Jawa Timur',
-                'description' => 'Logbook project untuk berbagai RS di Jawa Timur',
-                'owner_id' => $ownerId,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
+                'project_code'   => 'PRJAAA0001',
+                'voucher_code'   => Str::upper(Str::random(8)),
+                'name'           => 'Project Operasi Obgyn Jawa Timur',
+                'description'    => 'Logbook project untuk berbagai RS di Jawa Timur',
+                'start_date'     => '2025-01-01',
+                'end_date'       => '2025-12-31',
+                'status'         => 'active',
+                'owner_id'       => $ownerId,
+                'created_by'     => $ownerId,
+                'last_modified_by' => $ownerId,
+                'created_at'     => Carbon::now(),
+                'updated_at'     => Carbon::now(),
             ]
         ]);
     }
