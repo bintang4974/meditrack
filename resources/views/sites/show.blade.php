@@ -75,6 +75,16 @@
                                         <td>
                                             <a href="{{ route('patients.show', [$project->id, $site->id, $patient->id]) }}"
                                                 class="btn btn-sm btn-info">Detail</a>
+                                            <a href="{{ route('patients.edit', [$project->id, $site->id, $patient->id]) }}"
+                                                class="btn btn-sm btn-warning">Edit</a>
+                                            <form
+                                                action="{{ route('patients.destroy', [$project->id, $site->id, $patient->id]) }}"
+                                                method="POST" class="d-inline"
+                                                onsubmit="return confirm('Yakin ingin menghapus pasien ini?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
+                                            </form>
                                         </td>
                                     </tr>
                                 @empty
