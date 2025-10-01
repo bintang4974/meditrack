@@ -42,6 +42,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/projects/{project}/sites/{site}/patients/create', [PatientController::class, 'create'])->name('patients.create');
     Route::post('/projects/{project}/sites/{site}/patients', [PatientController::class, 'store'])->name('patients.store');
     Route::get('/projects/{project}/sites/{site}/patients/{patient}', [PatientController::class, 'show'])->name('patients.show');
+    Route::get('/projects/{project}/sites/{site}/patients/{patient}/edit', [PatientController::class, 'edit'])->name('patients.edit');
+    Route::put('/projects/{project}/sites/{site}/patients/{patient}', [PatientController::class, 'update'])->name('patients.update');
+    Route::delete('/projects/{project}/sites/{site}/patients/{patient}', [PatientController::class, 'destroy'])->name('patients.destroy');
 
     Route::get('/projects/{project}/sites/{site}/patients/{patient}/entries/create', [EntryController::class, 'create'])->name('entries.create');
     Route::post('/projects/{project}/sites/{site}/patients/{patient}/entries', [EntryController::class, 'store'])->name('entries.store');

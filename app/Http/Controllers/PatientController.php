@@ -41,6 +41,11 @@ class PatientController extends Controller
             'rekam_medis' => 'required|string|max:50',
             'name' => 'required|string|max:255',
             'dob' => 'nullable|date',
+            'age' => 'nullable|integer|min:0',
+            'phone_number' => 'nullable|string|max:20',
+            'address' => 'nullable|string',
+            'working_assessment' => 'nullable|string',
+            'context_summary' => 'nullable|string',
             'tags' => 'nullable|array',
             'tags.*' => 'exists:tags,id'
         ]);
@@ -50,6 +55,13 @@ class PatientController extends Controller
             'rekam_medis' => $request->rekam_medis,
             'name' => $request->name,
             'dob' => $request->dob,
+            'age' => $request->age,
+            'phone_number' => $request->phone_number,
+            'address' => $request->address,
+            'working_assessment' => $request->working_assessment,
+            'context_summary' => $request->context_summary,
+            'created_by' => auth()->id(),
+            'last_modified_by' => auth()->id(),
         ]);
 
         if ($request->filled('tags')) {
@@ -80,36 +92,59 @@ class PatientController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Patient $patient)
+    public function edit(Project $project, Site $site, Patient $patient)
     {
-        // $pageTitle = "Edit Pasien";
-        // $sites = Site::all();
-        // return view('patients.edit', compact('patient', 'sites', 'pageTitle'));
+        $pageTitle = "Edit Pasien";
+        $tags = Tag::where('status', 'active')->get();
+        $selectedTags = $patient->tags->pluck('id')->toArray();
+
+        return view('patients.edit', compact('pageTitle', 'project', 'site', 'patient', 'tags', 'selectedTags'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Patient $patient)
+    public function update(Request $request, Project $project, Site $site, Patient $patient)
     {
-        // $request->validate([
-        //     'site_id' => 'required|exists:sites,id',
-        //     'rekam_medis' => 'required|string|max:255',
-        //     'name' => 'nullable|string|max:255',
-        //     'dob' => 'nullable|date',
-        // ]);
+        $request->validate([
+            'rekam_medis' => 'required|string|max:50',
+            'name' => 'required|string|max:255',
+            'dob' => 'nullable|date',
+            'age' => 'nullable|integer|min:0',
+            'phone_number' => 'nullable|string|max:20',
+            'address' => 'nullable|string',
+            'working_assessment' => 'nullable|string',
+            'context_summary' => 'nullable|string',
+            'tags' => 'nullable|array',
+            'tags.*' => 'exists:tags,id'
+        ]);
 
-        // $patient->update($request->all());
+        $patient->update([
+            'rekam_medis' => $request->rekam_medis,
+            'name' => $request->name,
+            'dob' => $request->dob,
+            'age' => $request->age,
+            'phone_number' => $request->phone_number,
+            'address' => $request->address,
+            'working_assessment' => $request->working_assessment,
+            'context_summary' => $request->context_summary,
+            'last_modified_by' => auth()->id(),
+        ]);
 
-        // return redirect()->route('patients.index')->with('success', 'Pasien berhasil diperbarui!');
+        $patient->tags()->sync($request->tags ?? []);
+
+        return redirect()->route('patients.show', [$project->id, $site->id, $patient->id])
+            ->with('success', 'Data pasien berhasil diperbarui.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Patient $patient)
+    public function destroy(Project $project, Site $site, Patient $patient)
     {
-        // $patient->delete();
-        // return redirect()->route('patients.index')->with('success', 'Pasien berhasil dihapus!');
+        $patient->delete();
+
+        return redirect()->route('sites.show', [$project->id, $site->id])
+            ->with('success', 'Pasien berhasil dihapus.');
     }
 }

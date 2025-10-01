@@ -47,6 +47,26 @@
                                 @enderror
                             </div>
                             <div class="col-12">
+                                <label for="age" class="form-label">Umur</label>
+                                <input type="number" name="age" class="form-control" id="age">
+                            </div>
+                            <div class="col-12">
+                                <label for="phone_number" class="form-label">No. Telepon</label>
+                                <input type="text" name="phone_number" class="form-control" id="phone_number">
+                            </div>
+                            <div class="col-12">
+                                <label for="address" class="form-label">Alamat</label>
+                                <textarea name="address" class="form-control"></textarea>
+                            </div>
+                            <div class="col-12">
+                                <label for="working_assessment" class="form-label">Working Assessment</label>
+                                <textarea name="working_assessment" class="form-control"></textarea>
+                            </div>
+                            <div class="col-12">
+                                <label for="context_summary" class="form-label">Context Summary</label>
+                                <textarea name="context_summary" class="form-control"></textarea>
+                            </div>
+                            <div class="col-12">
                                 <label for="tags" class="form-label">Tags</label>
                                 <div class="row">
                                     @foreach ($tags as $tag)
