@@ -29,22 +29,29 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string',
+            'name'        => 'required|string|max:255',
             'description' => 'nullable|string',
+            'start_date'  => 'nullable|date',
+            'end_date'    => 'nullable|date|after_or_equal:start_date',
+            'status'      => 'required|in:active,inactive,completed',
         ]);
 
         $project = Project::create([
-            'project_code' => 'PRJ' . strtoupper(Str::random(6)),
-            'voucher_code' => strtoupper(Str::random(8)),
-            'name' => $request->name,
-            'description' => $request->description,
-            'owner_id' => Auth::id(),
+            'project_code'     => 'PRJ' . strtoupper(Str::random(6)),
+            'voucher_code'     => strtoupper(Str::random(8)),
+            'name'             => $request->name,
+            'description'      => $request->description,
+            'start_date'       => $request->start_date,
+            'end_date'         => $request->end_date,
+            'status'           => $request->status,
+            'owner_id'         => Auth::id(),
+            'created_by'       => Auth::id(),
+            'last_modified_by' => Auth::id(),
         ]);
 
-        // Tambahkan juga ke tabel pivot user_projects sebagai owner
         UserProject::create([
-            'user_id' => Auth::id(),
-            'project_id' => $project->id,
+            'user_id'        => Auth::id(),
+            'project_id'     => $project->id,
             'role_in_project' => 'owner'
         ]);
 
@@ -62,6 +69,44 @@ class ProjectController extends Controller
         }
 
         return view('projects.show', compact('project', 'pageTitle', 'pendingCount'));
+    }
+
+    public function edit(Project $project)
+    {
+        // hanya owner yg boleh edit
+        if ($project->owner_id !== Auth::id()) {
+            abort(403, 'Unauthorized');
+        }
+
+        $pageTitle = 'Edit Project';
+        return view('projects.edit', compact('project', 'pageTitle'));
+    }
+
+    public function update(Request $request, Project $project)
+    {
+        if ($project->owner_id !== Auth::id()) {
+            abort(403, 'Unauthorized');
+        }
+
+        $request->validate([
+            'name'        => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'start_date'  => 'nullable|date',
+            'end_date'    => 'nullable|date|after_or_equal:start_date',
+            'status'      => 'required|in:active,inactive,completed',
+        ]);
+
+        $project->update([
+            'name'             => $request->name,
+            'description'      => $request->description,
+            'start_date'       => $request->start_date,
+            'end_date'         => $request->end_date,
+            'status'           => $request->status,
+            'last_modified_by' => Auth::id(),
+        ]);
+
+        return redirect()->route('projects.show', $project->id)
+            ->with('success', 'Project berhasil diperbarui.');
     }
 
     public function search(Request $request)
@@ -163,5 +208,17 @@ class ProjectController extends Controller
         $joinRequest->update(['status' => 'rejected']);
 
         return back()->with('success', 'Permintaan join ditolak.');
+    }
+
+    public function destroy(Project $project)
+    {
+        if ($project->owner_id !== Auth::id()) {
+            abort(403, 'Unauthorized');
+        }
+
+        $project->delete();
+
+        return redirect()->route('projects.index')
+            ->with('success', 'Project berhasil dihapus.');
     }
 }
