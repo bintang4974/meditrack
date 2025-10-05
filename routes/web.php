@@ -87,8 +87,20 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/projects/{project}/tags/{tag}', [TagController::class, 'destroy'])->name('tags.destroy');
     Route::patch('/projects/{project}/tags/{tag}/toggle', [TagController::class, 'toggleStatus'])->name('tags.toggle');
 
+    // LABELS (per project)
+    Route::get('/projects/{project}/labels', [LabelController::class, 'index'])->name('labels.index');
+    Route::get('/projects/{project}/labels/create', [LabelController::class, 'create'])->name('labels.create');
+    Route::post('/projects/{project}/labels', [LabelController::class, 'store'])->name('labels.store');
+    Route::get('/projects/{project}/labels/filter', [LabelController::class, 'filter'])->name('labels.filter');
+    Route::get('/projects/{project}/labels/{label}', [LabelController::class, 'show'])->name('labels.show');
+    Route::get('/projects/{project}/labels/{label}/edit', [LabelController::class, 'edit'])->name('labels.edit');
+    Route::put('/projects/{project}/labels/{label}', [LabelController::class, 'update'])->name('labels.update');
+    Route::delete('/projects/{project}/labels/{label}', [LabelController::class, 'destroy'])->name('labels.destroy');
+    Route::patch('/projects/{project}/labels/{label}/toggle', [LabelController::class, 'toggleStatus'])->name('labels.toggle');
+    Route::get('/projects/{project}/labels/filter', [LabelController::class, 'filter'])->name('labels.filter');
+
     // Labels
-    Route::get('/labels', [LabelController::class, 'index'])->name('labels.index');
-    Route::get('/labels/filter', [LabelController::class, 'filter'])->name('labels.filter');
-    Route::get('/labels/{label}', [LabelController::class, 'show'])->name('labels.show');
+    // Route::get('/labels', [LabelController::class, 'index'])->name('labels.index');
+    // Route::get('/labels/filter', [LabelController::class, 'filter'])->name('labels.filter');
+    // Route::get('/labels/{label}', [LabelController::class, 'show'])->name('labels.show');
 });

@@ -6,9 +6,15 @@
     </div>
 
     <section class="section">
-        <form action="{{ route('labels.filter') }}" method="GET" class="mb-4">
+        <div class="mb-3">
+            <a href="{{ route('labels.index', $project->id) }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Kembali ke Daftar Labels
+            </a>
+        </div>
+
+        <form action="{{ route('labels.filter', $project->id) }}" method="GET" class="mb-4">
             <div class="mb-3">
-                <label>Pilih Labels</label>
+                <label>Pilih Label</label>
                 <div class="row">
                     @foreach ($labels as $label)
                         <div class="col-md-3">
@@ -25,9 +31,9 @@
                 </div>
             </div>
             <button type="submit" class="btn btn-primary">Cari Entries</button>
-            <a href="{{ route('labels.index') }}" class="btn btn-secondary">Kembali</a>
         </form>
 
+        {{-- 🔹 Kondisi tampilan hasil --}}
         @if (empty($selectedLabels))
             <div class="alert alert-info">
                 Silakan pilih satu atau lebih label untuk memulai filter.
@@ -35,7 +41,7 @@
         @else
             @if ($entries->isEmpty())
                 <div class="alert alert-warning">
-                    Tidak ada entry dengan kombinasi labels ini.
+                    Tidak ada entry dengan kombinasi label ini.
                 </div>
             @else
                 <h5>Hasil Filter:</h5>
