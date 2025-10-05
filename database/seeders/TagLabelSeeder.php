@@ -28,6 +28,7 @@ class TagLabelSeeder extends Seeder
         foreach ($tags as $tag) {
             Tag::create(array_merge($tag, [
                 'created_by' => 1,
+                'project_id' => 1,
                 'last_modified_by' => 1,
             ]));
         }
