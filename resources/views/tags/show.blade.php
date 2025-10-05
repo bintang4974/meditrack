@@ -5,6 +5,13 @@
         <h1>Pasien dengan Tag: {{ $tag->name }}</h1>
     </div>
 
+    <div class="mb-3">
+        <a href="{{ route('tags.index', $project->id) }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Kembali ke Daftar Tags
+        </a>
+    </div>
+
+
     <section class="section">
         <table class="table table-bordered table-striped">
             <thead>

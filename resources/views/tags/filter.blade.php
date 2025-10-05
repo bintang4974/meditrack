@@ -7,12 +7,12 @@
 
     <section class="section">
         <div class="mb-3">
-            <a href="{{ route('tags.index') }}" class="btn btn-secondary">
+            <a href="{{ route('tags.index', $project->id) }}" class="btn btn-secondary">
                 <i class="bi bi-arrow-left"></i> Kembali ke Daftar Tags
             </a>
         </div>
 
-        <form action="{{ route('tags.filter') }}" method="GET" class="mb-4">
+        <form action="{{ route('tags.filter', $project->id) }}" method="GET" class="mb-4">
             <div class="mb-3">
                 <label>Pilih Tag</label>
                 <div class="row">

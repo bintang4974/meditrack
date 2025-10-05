@@ -12,4 +12,9 @@ class Tag extends Model
     {
         return $this->belongsToMany(Patient::class, 'patient_tags')->withTimestamps();
     }
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
+    }
 }

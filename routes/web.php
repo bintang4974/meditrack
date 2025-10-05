@@ -72,9 +72,20 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('entries', EntryController::class)->only(['index']);
 
     // tags
-    Route::get('/tags', [TagController::class, 'index'])->name('tags.index');
-    Route::get('/tags/filter', [TagController::class, 'filter'])->name('tags.filter');
-    Route::get('/tags/{tag}', [TagController::class, 'show'])->name('tags.show');
+    // Route::get('/tags', [TagController::class, 'index'])->name('tags.index');
+    // Route::get('/tags/filter', [TagController::class, 'filter'])->name('tags.filter');
+    // Route::get('/tags/{tag}', [TagController::class, 'show'])->name('tags.show');
+
+    // TAGS (per project)
+    Route::get('/projects/{project}/tags', [TagController::class, 'index'])->name('tags.index');
+    Route::get('/projects/{project}/tags/create', [TagController::class, 'create'])->name('tags.create');
+    Route::post('/projects/{project}/tags', [TagController::class, 'store'])->name('tags.store');
+    Route::get('/projects/{project}/tags/filter', [TagController::class, 'filter'])->name('tags.filter');
+    Route::get('/projects/{project}/tags/{tag}', [TagController::class, 'show'])->name('tags.show');
+    Route::get('/projects/{project}/tags/{tag}/edit', [TagController::class, 'edit'])->name('tags.edit');
+    Route::put('/projects/{project}/tags/{tag}', [TagController::class, 'update'])->name('tags.update');
+    Route::delete('/projects/{project}/tags/{tag}', [TagController::class, 'destroy'])->name('tags.destroy');
+    Route::patch('/projects/{project}/tags/{tag}/toggle', [TagController::class, 'toggleStatus'])->name('tags.toggle');
 
     // Labels
     Route::get('/labels', [LabelController::class, 'index'])->name('labels.index');
