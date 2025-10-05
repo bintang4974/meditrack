@@ -46,6 +46,7 @@ class TagLabelSeeder extends Seeder
         foreach ($labels as $label) {
             Label::create(array_merge($label, [
                 'created_by' => 1,
+                'project_id' => 1,
                 'last_modified_by' => 1,
             ]));
         }

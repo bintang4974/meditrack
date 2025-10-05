@@ -58,16 +58,31 @@ class TagController extends Controller
     }
 
     // List Tags per Project
-    public function index(Project $project)
-    {
-        $pageTitle = "Daftar Tags";
-        $tags = Tag::where('project_id', $project->id)
-            ->orderByRaw("FIELD(status, 'active', 'inactive')")
-            ->get();
-        $isOwner = $project->owner_id === Auth::id();
+    // public function index(Project $project)
+    // {
+    //     $pageTitle = "Daftar Tags";
+    //     $tags = Tag::where('project_id', $project->id)
+    //         ->orderByRaw("FIELD(status, 'active', 'inactive')")
+    //         ->get();
+    //     $isOwner = $project->owner_id === Auth::id();
 
-        return view('tags.index', compact('pageTitle', 'project', 'tags', 'isOwner'));
+    //     return view('tags.index', compact('pageTitle', 'project', 'tags', 'isOwner'));
+    // }
+    public function index(Project $project, Request $request)
+    {
+        $status = $request->query('status', 'active'); // default: active
+
+        $query = Tag::where('project_id', $project->id);
+
+        if ($status !== 'all') {
+            $query->where('status', $status);
+        }
+
+        $tags = $query->orderBy('name')->get();
+
+        return view('tags.index', compact('project', 'tags', 'status'));
     }
+
 
     // Form Tambah Tag
     public function create(Project $project)
