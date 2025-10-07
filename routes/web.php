@@ -8,6 +8,7 @@ use App\Http\Controllers\{
     LabelController,
     PatientController,
     ProjectController,
+    ReportController,
     SiteController,
     TagController
 };
@@ -65,16 +66,10 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/projects/{project}/doctors/{doctor}', [DoctorController::class, 'update'])->name('doctors.update');
     Route::delete('/projects/{project}/doctors/{doctor}', [DoctorController::class, 'destroy'])->name('doctors.destroy');
 
-
     Route::get('/sub-categories/{category}', [CategoryController::class, 'subCategories']);
     Route::get('/categories/{category}/sub-categories', [EntryController::class, 'getSubCategories'])->name('categories.subCategories');
 
     Route::resource('entries', EntryController::class)->only(['index']);
-
-    // tags
-    // Route::get('/tags', [TagController::class, 'index'])->name('tags.index');
-    // Route::get('/tags/filter', [TagController::class, 'filter'])->name('tags.filter');
-    // Route::get('/tags/{tag}', [TagController::class, 'show'])->name('tags.show');
 
     // TAGS (per project)
     Route::get('/projects/{project}/tags', [TagController::class, 'index'])->name('tags.index');
@@ -99,8 +94,17 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/projects/{project}/labels/{label}/toggle', [LabelController::class, 'toggleStatus'])->name('labels.toggle');
     Route::get('/projects/{project}/labels/filter', [LabelController::class, 'filter'])->name('labels.filter');
 
-    // Labels
-    // Route::get('/labels', [LabelController::class, 'index'])->name('labels.index');
-    // Route::get('/labels/filter', [LabelController::class, 'filter'])->name('labels.filter');
-    // Route::get('/labels/{label}', [LabelController::class, 'show'])->name('labels.show');
+    // REPORTS (per project)
+    Route::get('/projects/{project}/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/projects/{project}/reports/export-excel', [ReportController::class, 'exportExcel'])->name('reports.exportExcel');
+    Route::get('/projects/{project}/reports/export-pdf', [ReportController::class, 'exportPdf'])->name('reports.exportPdf');
+    // Route::prefix('projects/{project}/reports')->middleware(['auth'])->group(function () {
+    //     Route::get('/', [ReportController::class, 'index'])->name('reports.index');
+    //     Route::get('/export-excel', [ReportController::class, 'exportExcel'])->name('reports.exportExcel');
+    //     Route::get('/export-pdf', [ReportController::class, 'exportPdf'])->name('reports.exportPdf');
+    // });
+
+    // Route::get('/projects/{project}/reports', [ReportController::class, 'index'])->name('reports.index');
+    // Route::get('/projects/{project}/reports/export-excel', [ReportController::class, 'exportExcel'])->name('reports.export.excel');
+    // Route::get('/projects/{project}/reports/export-pdf', [ReportController::class, 'exportPdf'])->name('reports.export.pdf');
 });
