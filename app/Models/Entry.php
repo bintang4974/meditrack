@@ -8,11 +8,6 @@ class Entry extends Model
 {
     protected $guarded = [];
 
-    // protected $casts = [
-    //     'log_image_files' => 'array',
-    //     'log_document_files' => 'array',
-    // ];
-
     public function subCategory()
     {
         return $this->belongsTo(SubCategory::class);
@@ -48,24 +43,9 @@ class Entry extends Model
         return $this->belongsTo(Doctor::class, 'entry_supervisor');
     }
 
-    // public function encounter()
-    // {
-    //     return $this->belongsTo(Encounter::class);
-    // }
-
     public function category()
     {
         return $this->belongsTo(Category::class);
-    }
-
-    // public function supervisor()
-    // {
-    //     return $this->belongsTo(Doctor::class, 'entry_supervisor');
-    // }
-
-    public function metadata()
-    {
-        return $this->hasMany(Metadata::class);
     }
 
     public function project()

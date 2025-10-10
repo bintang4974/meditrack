@@ -2,8 +2,8 @@
 <html>
 
 <head>
-    <meta charset="utf-8">
-    <title>Laporan Bulanan</title>
+    <meta charset="UTF-8">
+    <title>Laporan Aktivitas</title>
     <style>
         body {
             font-family: DejaVu Sans, sans-serif;
@@ -13,48 +13,52 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 15px;
         }
 
         th,
         td {
-            border: 1px solid #000;
+            border: 1px solid #555;
             padding: 6px;
             text-align: left;
         }
 
         th {
-            background: #f2f2f2;
+            background: #f0f0f0;
         }
     </style>
 </head>
 
 <body>
-    <h3 style="text-align:center;">Laporan Portofolio Bulanan</h3>
-    <p><strong>Project:</strong> {{ $project->name }}</p>
-    <p><strong>Periode:</strong> {{ \Carbon\Carbon::create()->month($month)->translatedFormat('F') }}
-        {{ $year }}</p>
+    <h2 style="text-align:center;">Laporan Aktivitas Project: {{ $project->name }}</h2>
+    <p>Periode: {{ $filters['from_date'] ?? '-' }} s/d {{ $filters['to_date'] ?? '-' }}</p>
 
     <table>
         <thead>
             <tr>
                 <th>No</th>
                 <th>Tanggal</th>
-                <th>Nama Pasien</th>
+                <th>Pasien</th>
                 <th>Rumah Sakit</th>
-                <th>Deskripsi</th>
-                <th>Tingkat Objektif</th>
+                <th>Kategori</th>
+                <th>Sub Kategori</th>
+                <th>Kompetensi</th>
+                <th>Label</th>
+                <th>Tag</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($entries as $i => $entry)
                 <tr>
                     <td>{{ $i + 1 }}</td>
-                    <td>{{ $entry->created_at->format('d-m-Y') }}</td>
+                    <td>{{ $entry->entry_date }}</td>
                     <td>{{ $entry->patient->name ?? '-' }}</td>
                     <td>{{ $entry->patient->site->name ?? '-' }}</td>
-                    <td>{{ $entry->description ?? '-' }}</td>
+                    <td>{{ $entry->subCategory->category->name ?? '-' }}</td>
+                    <td>{{ $entry->subCategory->name ?? '-' }}</td>
                     <td>{{ $entry->competence_level ?? '-' }}</td>
+                    <td>{{ $entry->labels->pluck('name')->join(', ') }}</td>
+                    <td>{{ $entry->patient->tags->pluck('name')->join(', ') }}</td>
                 </tr>
             @endforeach
         </tbody>
