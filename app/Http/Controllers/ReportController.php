@@ -11,21 +11,6 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReportController extends Controller
 {
-    // public function index()
-    // {
-    //     $user = Auth::user();
-
-    //     $projects = Project::whereHas('users', fn($q) => $q->where('user_id', $user->id))
-    //         ->orWhere('owner_id', $user->id)
-    //         ->get();
-
-    //     $categories = Category::with(['subCategories' => fn($q) => $q->where('is_active', true)])->get();
-    //     $labels = Label::where('status', 'active')->get();
-    //     $tags = Tag::where('status', 'active')->get();
-
-    //     return view('reports.index', compact('projects', 'categories', 'labels', 'tags'));
-    // }
-
     public function index()
     {
         $user = Auth::user();
@@ -102,10 +87,25 @@ class ReportController extends Controller
 
     public function exportPdf(Request $request)
     {
-        $entries = $this->getFilteredEntries($request);
+        $filters = json_decode($request->filters, true) ?? [];
 
-        $pdf = Pdf::loadView('reports.pdf', compact('entries'))
-            ->setPaper('a4', 'landscape');
+        // normalize single-value arrays
+        foreach (['site_id', 'project_id', 'scope', 'from_date', 'to_date'] as $key) {
+            if (isset($filters[$key]) && is_array($filters[$key])) {
+                $filters[$key] = $filters[$key][0];
+            }
+        }
+        
+        $request->merge($filters);
+
+        $entries = $this->getFilteredEntries($request);
+        $project = Project::find($request->project_id);
+
+        $pdf = Pdf::loadView('reports.pdf', [
+            'entries' => $entries,
+            'project' => $project,
+            'filters' => $filters,
+        ])->setPaper('a4', 'landscape');
 
         return $pdf->download('Report_' . now()->format('Ymd_His') . '.pdf');
     }

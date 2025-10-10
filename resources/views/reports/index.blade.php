@@ -180,7 +180,6 @@
                 checkAllBtn.addEventListener('click', () => {
                     document.querySelectorAll('.form-check-input').forEach(chk => chk.checked = true);
                 });
-
                 uncheckAllBtn.addEventListener('click', () => {
                     document.querySelectorAll('.form-check-input').forEach(chk => chk.checked = false);
                 });
@@ -204,48 +203,68 @@
                         const allChecked = Array.from(allSubs).every(sub => sub.checked);
                         const noneChecked = Array.from(allSubs).every(sub => !sub.checked);
 
-                        // update parent checkbox status
                         parent.checked = allChecked;
                         parent.indeterminate = !allChecked && !noneChecked;
                     });
                 });
-            });
 
-            document.getElementById('project_id').addEventListener('change', function() {
-                const projectId = this.value;
-                const siteSelect = document.getElementById('site_id');
+                // Ganti Rumah Sakit saat project berubah
+                document.getElementById('project_id').addEventListener('change', function() {
+                    const projectId = this.value;
+                    const siteSelect = document.getElementById('site_id');
+                    siteSelect.innerHTML = '<option>Memuat...</option>';
 
-                siteSelect.innerHTML = '<option>Memuat...</option>';
-
-                fetch(`/reports/sites/${projectId}`)
-                    .then(res => res.json())
-                    .then(sites => {
-                        siteSelect.innerHTML = '<option value="all">Semua Rumah Sakit</option>';
-                        sites.forEach(site => {
-                            const opt = document.createElement('option');
-                            opt.value = site.id;
-                            opt.textContent = site.name;
-                            siteSelect.appendChild(opt);
+                    fetch(`/reports/sites/${projectId}`)
+                        .then(res => res.json())
+                        .then(sites => {
+                            siteSelect.innerHTML = '<option value="all">Semua Rumah Sakit</option>';
+                            sites.forEach(site => {
+                                const opt = document.createElement('option');
+                                opt.value = site.id;
+                                opt.textContent = site.name;
+                                siteSelect.appendChild(opt);
+                            });
+                        })
+                        .catch(() => {
+                            siteSelect.innerHTML = '<option value="">Gagal memuat</option>';
                         });
-                    })
-                    .catch(() => {
-                        siteSelect.innerHTML = '<option value="">Gagal memuat</option>';
-                    });
-            });
+                });
 
-            document.getElementById('filterBtn').addEventListener('click', function() {
-                let formData = new FormData(document.getElementById('filterForm'));
-                fetch("{{ route('reports.filter') }}", {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        body: formData
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        document.getElementById('reportResult').innerHTML = data.html;
-                    });
+                // Saat klik tombol tampilkan
+                document.getElementById('filterBtn').addEventListener('click', function() {
+                    let formData = new FormData(document.getElementById('filterForm'));
+                    fetch("{{ route('reports.filter') }}", {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: formData
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            document.getElementById('reportResult').innerHTML = data.html;
+
+                            // ✅ Simpan filter terakhir ke tombol export (Excel & PDF)
+                            const form = document.getElementById('filterForm');
+                            const formDataObj = {};
+                            new FormData(form).forEach((value, key) => {
+                                if (!formDataObj[key]) formDataObj[key] = [];
+                                formDataObj[key].push(value);
+                            });
+                            const jsonFilters = JSON.stringify(formDataObj);
+
+                            // Tunggu DOM update, lalu isi hidden input
+                            setTimeout(() => {
+                                const excelInput = document.getElementById('excelFilters');
+                                const pdfInput = document.getElementById('pdfFilters');
+                                if (excelInput && pdfInput) {
+                                    excelInput.value = jsonFilters;
+                                    pdfInput.value = jsonFilters;
+                                }
+                            }, 300);
+                        })
+                        .catch(err => console.error(err));
+                });
             });
         </script>
     @endpush
