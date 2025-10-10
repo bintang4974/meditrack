@@ -2,81 +2,128 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Entry;
-use App\Models\Project;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Carbon\Carbon;
+use App\Models\{Project, Site, Category, SubCategory, Entry, Label, Tag};
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReportController extends Controller
 {
-    public function index(Project $project)
+    // public function index()
+    // {
+    //     $user = Auth::user();
+
+    //     $projects = Project::whereHas('users', fn($q) => $q->where('user_id', $user->id))
+    //         ->orWhere('owner_id', $user->id)
+    //         ->get();
+
+    //     $categories = Category::with(['subCategories' => fn($q) => $q->where('is_active', true)])->get();
+    //     $labels = Label::where('status', 'active')->get();
+    //     $tags = Tag::where('status', 'active')->get();
+
+    //     return view('reports.index', compact('projects', 'categories', 'labels', 'tags'));
+    // }
+
+    public function index()
     {
-        $pageTitle = "Laporan Bulanan";
-        $years = Entry::selectRaw('YEAR(created_at) as year')->distinct()->pluck('year');
-        return view('reports.index', compact('project', 'years', 'pageTitle'));
+        $user = Auth::user();
+
+        $projects = Project::whereHas('users', fn($q) => $q->where('user_id', $user->id))
+            ->orWhere('owner_id', $user->id)
+            ->get();
+
+        $firstProject = $projects->first();
+
+        $sites = $firstProject
+            ? $firstProject->sites()->where('status', 'active')->orderBy('name')->get()
+            : collect(); // biar ga error kalau project kosong
+
+        $categories = Category::with(['subCategories' => fn($q) => $q->where('is_active', true)])->get();
+        $labels = Label::where('status', 'active')->get();
+        $tags = Tag::where('status', 'active')->get();
+
+        return view('reports.index', compact('projects', 'categories', 'labels', 'tags', 'sites'));
     }
 
-    public function exportExcel(Project $project, Request $request)
+    public function getSites(Project $project)
     {
-        $month = (int) $request->input('month'); // pastikan jadi angka
-        $year = (int) $request->input('year');
+        $sites = $project->sites()->where('status', 'active')->orderBy('name')->get(['id', 'name']);
 
-        $entries = Entry::whereYear('created_at', $year)
-            ->whereMonth('created_at', $month)
-            ->where('project_id', $project->id)
-            ->with(['patient.site'])
-            ->get();
+        return response()->json($sites);
+    }
+
+    public function filter(Request $request)
+    {
+        $entries = $this->getFilteredEntries($request);
+
+        return response()->json([
+            'html' => view('reports._table', compact('entries'))->render(),
+            'count' => $entries->count(),
+        ]);
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $entries = $this->getFilteredEntries($request);
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Laporan Aktivitas');
 
-        // Header
-        $sheet->setCellValue('A1', 'Laporan Portofolio Bulanan');
-        $sheet->mergeCells('A1:F1');
-        $sheet->setCellValue('A2', "Periode: " . Carbon::create()->month($month)->locale('id')->monthName . " $year");
-        $sheet->mergeCells('A2:F2');
+        $sheet->fromArray([
+            ['No', 'Tanggal', 'Pasien', 'Rumah Sakit', 'Kategori', 'Sub Kategori', 'Kompetensi', 'Label', 'Tag']
+        ], null, 'A1');
 
-        // Table Header
-        $sheet->fromArray(['No', 'Tanggal', 'Nama Pasien', 'Rumah Sakit', 'Deskripsi', 'Tingkat Objektif'], NULL, 'A4');
-
-        $row = 5;
+        $row = 2;
         foreach ($entries as $index => $entry) {
             $sheet->fromArray([
                 $index + 1,
-                $entry->created_at->format('d-m-Y'),
+                $entry->entry_date,
                 $entry->patient->name ?? '-',
                 $entry->patient->site->name ?? '-',
-                $entry->description ?? '-',
-                $entry->competence_level ?? '-'
-            ], NULL, "A{$row}");
+                $entry->subCategory->category->name ?? '-',
+                $entry->subCategory->name ?? '-',
+                $entry->competence_level ?? '-',
+                $entry->labels->pluck('name')->join(', '),
+                $entry->patient->tags->pluck('name')->join(', ')
+            ], null, "A{$row}");
             $row++;
         }
 
-        $sheet->setTitle("Laporan $month-$year");
+        $fileName = 'Report_' . now()->format('Ymd_His') . '.xlsx';
         $writer = new Xlsx($spreadsheet);
-
-        $fileName = "Laporan_{$project->name}_{$month}_{$year}.xlsx";
-        $filePath = storage_path("app/public/$fileName");
+        $filePath = storage_path("app/public/{$fileName}");
         $writer->save($filePath);
 
         return response()->download($filePath)->deleteFileAfterSend(true);
     }
 
-    public function exportPdf(Project $project, Request $request)
+    public function exportPdf(Request $request)
     {
-        $month = (int) $request->input('month'); // pastikan jadi angka
-        $year = (int) $request->input('year');
+        $entries = $this->getFilteredEntries($request);
 
-        $entries = Entry::whereYear('created_at', $year)
-            ->whereMonth('created_at', $month)
-            ->where('project_id', $project->id)
-            ->with(['patient.site'])
+        $pdf = Pdf::loadView('reports.pdf', compact('entries'))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->download('Report_' . now()->format('Ymd_His') . '.pdf');
+    }
+
+    private function getFilteredEntries(Request $request)
+    {
+        $project = Project::find($request->project_id);
+
+        return Entry::query()
+            ->where('project_id', $project?->id)
+            ->when($request->filled('site_id') && $request->site_id !== 'all', fn($q) => $q->whereHas('patient', fn($x) => $x->where('site_id', $request->site_id)))
+            // ->when($request->filled('site_id'), fn($q) => $q->whereHas('patient', fn($x) => $x->where('site_id', $request->site_id)))
+            ->when($request->filled('sub_category_ids'), fn($q) => $q->whereIn('sub_category_id', $request->sub_category_ids))
+            ->when($request->filled('label_ids'), fn($q) => $q->whereHas('labels', fn($x) => $x->whereIn('labels.id', $request->label_ids)))
+            ->when($request->filled('tag_ids'), fn($q) => $q->whereHas('patient.tags', fn($x) => $x->whereIn('tags.id', $request->tag_ids)))
+            ->when($request->filled('from_date') && $request->filled('to_date'), fn($q) => $q->whereBetween('entry_date', [$request->from_date, $request->to_date]))
+            ->when($request->input('scope') === 'mine', fn($q) => $q->where('created_by', Auth::id()))
+            ->with(['patient.site', 'subCategory.category', 'labels', 'patient.tags'])
             ->get();
-
-        $pdf = Pdf::loadView('reports.pdf', compact('entries', 'project', 'month', 'year'));
-        return $pdf->download("Laporan_{$project->name}_{$month}_{$year}.pdf");
     }
 }

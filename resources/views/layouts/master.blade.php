@@ -135,65 +135,14 @@
                     <span>Project</span>
                 </a>
             </li><!-- End Dashboard Nav -->
-            {{-- <li class="nav-item">
-                @php
-                    $isOwner = Auth::user()->projects()->wherePivot('role_in_project', 'owner')->exists();
-                @endphp
 
-                @if ($isOwner)
-                    <a class="nav-link" href="{{ route('projects.index') }}">
-                        <i class="bi bi-people"></i>
-                        <span>Join Requests</span>
-                    </a>
-                @endif
-
-                <a class="nav-link {{ request()->is('projects') ? 'active' : 'collapsed' }}"
-                    href="{{ route('projects.joinRequests') }}">
-                    <i class="bi bi-kanban"></i>
-                    <span>Acc</span>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('reports') ? 'active' : 'collapsed' }}"
+                    href="{{ route('reports.index') }}">
+                    <i class="bi bi-file-earmark-bar-graph"></i>
+                    <span>Report</span>
                 </a>
-            </li><!-- End Dashboard Nav --> --}}
-
-            {{-- <li class="nav-item">
-                <a class="nav-link {{ request()->is('sites') ? 'active' : 'collapsed' }}"
-                    href="{{ route('sites.index') }}">
-                    <i class="bi bi-hospital"></i>
-                    <span>Site</span>
-                </a>
-            </li><!-- End Dashboard Nav --> --}}
-
-            {{-- <li class="nav-item">
-                <a class="nav-link {{ request()->is('categories') ? 'active' : 'collapsed' }}"
-                    href="{{ route('categories.index') }}">
-                    <i class="bi bi-grid"></i>
-                    <span>Category</span>
-                </a>
-            </li><!-- End Dashboard Nav --> --}}
-
-            {{-- <li class="nav-item">
-                <a class="nav-link {{ request()->is('patients') ? 'active' : 'collapsed' }}"
-                    href="{{ route('patients.index') }}">
-                    <i class="bi bi-person-lines-fill"></i>
-                    <span>Patient</span>
-                </a>
-            </li><!-- End Dashboard Nav --> --}}
-
-            {{-- <li class="nav-item">
-                <a class="nav-link {{ request()->is('doctors') ? 'active' : 'collapsed' }}"
-                    href="{{ route('doctors.index') }}">
-                    <i class="bi bi-person-heart"></i>
-                    <span>Doctor</span>
-                </a>
-            </li><!-- End Dashboard Nav --> --}}
-
-            {{-- <li class="nav-item">
-                <a class="nav-link {{ request()->is('entries') ? 'active' : 'collapsed' }}"
-                    href="{{ route('entries.index') }}">
-                    <i class="bi bi-grid"></i>
-                    <span>Entry</span>
-                </a>
-            </li><!-- End Dashboard Nav --> --}}
-
+            </li>
         </ul>
 
     </aside><!-- End Sidebar-->

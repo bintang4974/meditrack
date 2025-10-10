@@ -14,15 +14,9 @@ use App\Http\Controllers\{
 };
 use Illuminate\Support\Facades\Route;
 
-// Route::get('/', function () {
-//     return view('layouts.master');
-// });
-
 Route::get('/', fn() => redirect()->route('login'));
 
 Auth::routes();
-
-// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -94,17 +88,12 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/projects/{project}/labels/{label}/toggle', [LabelController::class, 'toggleStatus'])->name('labels.toggle');
     Route::get('/projects/{project}/labels/filter', [LabelController::class, 'filter'])->name('labels.filter');
 
-    // REPORTS (per project)
-    Route::get('/projects/{project}/reports', [ReportController::class, 'index'])->name('reports.index');
-    Route::get('/projects/{project}/reports/export-excel', [ReportController::class, 'exportExcel'])->name('reports.exportExcel');
-    Route::get('/projects/{project}/reports/export-pdf', [ReportController::class, 'exportPdf'])->name('reports.exportPdf');
-    // Route::prefix('projects/{project}/reports')->middleware(['auth'])->group(function () {
-    //     Route::get('/', [ReportController::class, 'index'])->name('reports.index');
-    //     Route::get('/export-excel', [ReportController::class, 'exportExcel'])->name('reports.exportExcel');
-    //     Route::get('/export-pdf', [ReportController::class, 'exportPdf'])->name('reports.exportPdf');
-    // });
-
-    // Route::get('/projects/{project}/reports', [ReportController::class, 'index'])->name('reports.index');
-    // Route::get('/projects/{project}/reports/export-excel', [ReportController::class, 'exportExcel'])->name('reports.export.excel');
-    // Route::get('/projects/{project}/reports/export-pdf', [ReportController::class, 'exportPdf'])->name('reports.export.pdf');
+    // REPORT
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+        Route::post('/reports/filter', [ReportController::class, 'filter'])->name('reports.filter');
+        Route::get('/reports/export/excel', [ReportController::class, 'exportExcel'])->name('reports.export.excel');
+        Route::get('/reports/export/pdf', [ReportController::class, 'exportPdf'])->name('reports.export.pdf');
+    });
+    Route::get('/reports/sites/{project}', [ReportController::class, 'getSites'])->name('reports.getSites');
 });
