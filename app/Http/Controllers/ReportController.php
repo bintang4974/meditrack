@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Barryvdh\DomPDF\Facade\Pdf;
+use PhpOffice\PhpSpreadsheet\Style\{Alignment, Border, Fill};
 
 class ReportController extends Controller
 {
@@ -51,36 +52,83 @@ class ReportController extends Controller
 
     public function exportExcel(Request $request)
     {
+        $filters = json_decode($request->filters, true) ?? [];
+
+        // Normalisasi data sama seperti PDF
+        foreach (['site_id', 'project_id', 'scope', 'from_date', 'to_date'] as $key) {
+            if (isset($filters[$key]) && is_array($filters[$key])) {
+                $filters[$key] = $filters[$key][0];
+            }
+        }
+
+        $request->merge($filters);
+
         $entries = $this->getFilteredEntries($request);
+        $project = Project::find($request->project_id);
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Laporan Aktivitas');
 
-        $sheet->fromArray([
-            ['No', 'Tanggal', 'Pasien', 'Rumah Sakit', 'Kategori', 'Sub Kategori', 'Kompetensi', 'Label', 'Tag']
-        ], null, 'A1');
+        // Header
+        $headers = ['No', 'Tanggal', 'Pasien', 'Rumah Sakit', 'Kategori', 'Sub Kategori', 'Kompetensi', 'Label', 'Tag'];
+        $sheet->fromArray([$headers], null, 'A1');
 
+        // Styling header
+        $headerStyle = [
+            'font' => ['bold' => true],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => ['rgb' => 'E2EFDA']
+            ],
+        ];
+        $sheet->getStyle('A1:I1')->applyFromArray($headerStyle);
+
+        // Isi data
         $row = 2;
         foreach ($entries as $index => $entry) {
             $sheet->fromArray([
                 $index + 1,
-                $entry->entry_date,
+                $entry->entry_date ?? '-',
                 $entry->patient->name ?? '-',
                 $entry->patient->site->name ?? '-',
                 $entry->subCategory->category->name ?? '-',
                 $entry->subCategory->name ?? '-',
-                $entry->competence_level ?? '-',
-                $entry->labels->pluck('name')->join(', '),
-                $entry->patient->tags->pluck('name')->join(', ')
+                match ($entry->competence_level) {
+                    '1' => 'Tingkat 1 (Asisten)',
+                    '2' => 'Tingkat 2 (Mandiri Terbimbing)',
+                    '3' => 'Tingkat 3 (Mandiri Penuh)',
+                    default => $entry->competence_level ?? '-',
+                },
+                $entry->labels->pluck('name')->join(', ') ?: '-',
+                $entry->patient->tags->pluck('name')->join(', ') ?: '-'
             ], null, "A{$row}");
             $row++;
         }
 
+        // Auto width kolom
+        foreach (range('A', 'I') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        // Border untuk semua sel terisi
+        $sheet->getStyle('A1:I' . ($row - 1))->getBorders()->getAllBorders()->setBorderStyle(
+            \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+        );
+
+        // Info footer
+        $sheet->setCellValue("A{$row}", 'Dicetak oleh: ' . (Auth::user()->name ?? 'User'));
+        $sheet->setCellValue("H{$row}", now()->translatedFormat('d F Y, H:i'));
+        $sheet->mergeCells("A{$row}:E{$row}");
+        $sheet->getStyle("A{$row}:I{$row}")
+            ->getFont()->setItalic(true)->setSize(10);
+
+        // Simpan & unduh
         $fileName = 'Report_' . now()->format('Ymd_His') . '.xlsx';
-        $writer = new Xlsx($spreadsheet);
         $filePath = storage_path("app/public/{$fileName}");
-        $writer->save($filePath);
+        (new Xlsx($spreadsheet))->save($filePath);
 
         return response()->download($filePath)->deleteFileAfterSend(true);
     }
@@ -95,7 +143,7 @@ class ReportController extends Controller
                 $filters[$key] = $filters[$key][0];
             }
         }
-        
+
         $request->merge($filters);
 
         $entries = $this->getFilteredEntries($request);

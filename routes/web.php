@@ -89,11 +89,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/projects/{project}/labels/filter', [LabelController::class, 'filter'])->name('labels.filter');
 
     // REPORT
-    Route::middleware(['auth'])->group(function () {
-        Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
-        Route::post('/reports/filter', [ReportController::class, 'filter'])->name('reports.filter');
-        Route::post('/reports/export/excel', [ReportController::class, 'exportExcel'])->name('reports.export.excel');
-        Route::post('/reports/export/pdf', [ReportController::class, 'exportPdf'])->name('reports.export.pdf');
-    });
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::post('/reports/filter', [ReportController::class, 'filter'])->name('reports.filter');
+    Route::post('/reports/export/excel', [ReportController::class, 'exportExcel'])->name('reports.export.excel');
+    Route::post('/reports/export/pdf', [ReportController::class, 'exportPdf'])->name('reports.export.pdf');
     Route::get('/reports/sites/{project}', [ReportController::class, 'getSites'])->name('reports.getSites');
 });

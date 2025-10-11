@@ -68,33 +68,6 @@
                     </div>
                 </div>
 
-                {{-- <div class="mt-3">
-                    <label>Kategori & Sub-Kategori</label>
-                    <div class="accordion" id="categoryAccordion">
-                        @foreach ($categories as $category)
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="heading{{ $category->id }}">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#collapse{{ $category->id }}">
-                                        {{ $category->name }}
-                                    </button>
-                                </h2>
-                                <div id="collapse{{ $category->id }}" class="accordion-collapse collapse">
-                                    <div class="accordion-body">
-                                        @foreach ($category->subCategories as $sub)
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="sub_category_ids[]"
-                                                    value="{{ $sub->id }}">
-                                                <label class="form-check-label">{{ $sub->name }}</label>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </div> --}}
-
                 <div class="mt-3">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <label class="fw-bold">Kategori & Sub-Kategori</label>
@@ -152,120 +125,120 @@
             <div class="text-center text-muted">Silakan pilih filter untuk menampilkan data...</div>
         </div>
     </section>
+@endsection
 
-    @push('scripts')
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const accordion = document.getElementById('categoryAccordion');
-                const expandAllBtn = document.getElementById('expandAll');
-                const collapseAllBtn = document.getElementById('collapseAll');
-                const checkAllBtn = document.getElementById('checkAll');
-                const uncheckAllBtn = document.getElementById('uncheckAll');
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const accordion = document.getElementById('categoryAccordion');
+            const expandAllBtn = document.getElementById('expandAll');
+            const collapseAllBtn = document.getElementById('collapseAll');
+            const checkAllBtn = document.getElementById('checkAll');
+            const uncheckAllBtn = document.getElementById('uncheckAll');
 
-                // Expand all categories
-                expandAllBtn.addEventListener('click', () => {
-                    accordion.querySelectorAll('.accordion-collapse').forEach(c => new bootstrap.Collapse(c, {
-                        show: true
-                    }));
-                });
+            // Expand all categories
+            expandAllBtn.addEventListener('click', () => {
+                accordion.querySelectorAll('.accordion-collapse').forEach(c => new bootstrap.Collapse(c, {
+                    show: true
+                }));
+            });
 
-                // Collapse all categories
-                collapseAllBtn.addEventListener('click', () => {
-                    accordion.querySelectorAll('.accordion-collapse').forEach(c => new bootstrap.Collapse(c, {
-                        hide: true
-                    }));
-                });
+            // Collapse all categories
+            collapseAllBtn.addEventListener('click', () => {
+                accordion.querySelectorAll('.accordion-collapse').forEach(c => new bootstrap.Collapse(c, {
+                    hide: true
+                }));
+            });
 
-                // Check/uncheck all
-                checkAllBtn.addEventListener('click', () => {
-                    document.querySelectorAll('.form-check-input').forEach(chk => chk.checked = true);
-                });
-                uncheckAllBtn.addEventListener('click', () => {
-                    document.querySelectorAll('.form-check-input').forEach(chk => chk.checked = false);
-                });
+            // Check/uncheck all
+            checkAllBtn.addEventListener('click', () => {
+                document.querySelectorAll('.form-check-input').forEach(chk => chk.checked = true);
+            });
+            uncheckAllBtn.addEventListener('click', () => {
+                document.querySelectorAll('.form-check-input').forEach(chk => chk.checked = false);
+            });
 
-                // Checkbox hierarchy behavior
-                document.querySelectorAll('.category-checkbox').forEach(cat => {
-                    cat.addEventListener('change', function() {
-                        const catId = this.dataset.category;
-                        document.querySelectorAll(`.sub-category-checkbox[data-parent="${catId}"]`)
-                            .forEach(sub => sub.checked = this.checked);
-                    });
-                });
-
-                document.querySelectorAll('.sub-category-checkbox').forEach(sub => {
-                    sub.addEventListener('change', function() {
-                        const parentId = this.dataset.parent;
-                        const parent = document.querySelector(
-                            `.category-checkbox[data-category="${parentId}"]`);
-                        const allSubs = document.querySelectorAll(
-                            `.sub-category-checkbox[data-parent="${parentId}"]`);
-                        const allChecked = Array.from(allSubs).every(sub => sub.checked);
-                        const noneChecked = Array.from(allSubs).every(sub => !sub.checked);
-
-                        parent.checked = allChecked;
-                        parent.indeterminate = !allChecked && !noneChecked;
-                    });
-                });
-
-                // Ganti Rumah Sakit saat project berubah
-                document.getElementById('project_id').addEventListener('change', function() {
-                    const projectId = this.value;
-                    const siteSelect = document.getElementById('site_id');
-                    siteSelect.innerHTML = '<option>Memuat...</option>';
-
-                    fetch(`/reports/sites/${projectId}`)
-                        .then(res => res.json())
-                        .then(sites => {
-                            siteSelect.innerHTML = '<option value="all">Semua Rumah Sakit</option>';
-                            sites.forEach(site => {
-                                const opt = document.createElement('option');
-                                opt.value = site.id;
-                                opt.textContent = site.name;
-                                siteSelect.appendChild(opt);
-                            });
-                        })
-                        .catch(() => {
-                            siteSelect.innerHTML = '<option value="">Gagal memuat</option>';
-                        });
-                });
-
-                // Saat klik tombol tampilkan
-                document.getElementById('filterBtn').addEventListener('click', function() {
-                    let formData = new FormData(document.getElementById('filterForm'));
-                    fetch("{{ route('reports.filter') }}", {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            body: formData
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                            document.getElementById('reportResult').innerHTML = data.html;
-
-                            // ✅ Simpan filter terakhir ke tombol export (Excel & PDF)
-                            const form = document.getElementById('filterForm');
-                            const formDataObj = {};
-                            new FormData(form).forEach((value, key) => {
-                                if (!formDataObj[key]) formDataObj[key] = [];
-                                formDataObj[key].push(value);
-                            });
-                            const jsonFilters = JSON.stringify(formDataObj);
-
-                            // Tunggu DOM update, lalu isi hidden input
-                            setTimeout(() => {
-                                const excelInput = document.getElementById('excelFilters');
-                                const pdfInput = document.getElementById('pdfFilters');
-                                if (excelInput && pdfInput) {
-                                    excelInput.value = jsonFilters;
-                                    pdfInput.value = jsonFilters;
-                                }
-                            }, 300);
-                        })
-                        .catch(err => console.error(err));
+            // Checkbox hierarchy behavior
+            document.querySelectorAll('.category-checkbox').forEach(cat => {
+                cat.addEventListener('change', function() {
+                    const catId = this.dataset.category;
+                    document.querySelectorAll(`.sub-category-checkbox[data-parent="${catId}"]`)
+                        .forEach(sub => sub.checked = this.checked);
                 });
             });
-        </script>
-    @endpush
-@endsection
+
+            document.querySelectorAll('.sub-category-checkbox').forEach(sub => {
+                sub.addEventListener('change', function() {
+                    const parentId = this.dataset.parent;
+                    const parent = document.querySelector(
+                        `.category-checkbox[data-category="${parentId}"]`);
+                    const allSubs = document.querySelectorAll(
+                        `.sub-category-checkbox[data-parent="${parentId}"]`);
+                    const allChecked = Array.from(allSubs).every(sub => sub.checked);
+                    const noneChecked = Array.from(allSubs).every(sub => !sub.checked);
+
+                    parent.checked = allChecked;
+                    parent.indeterminate = !allChecked && !noneChecked;
+                });
+            });
+
+            // Ganti Rumah Sakit saat project berubah
+            document.getElementById('project_id').addEventListener('change', function() {
+                const projectId = this.value;
+                const siteSelect = document.getElementById('site_id');
+                siteSelect.innerHTML = '<option>Memuat...</option>';
+
+                fetch(`/reports/sites/${projectId}`)
+                    .then(res => res.json())
+                    .then(sites => {
+                        siteSelect.innerHTML = '<option value="all">Semua Rumah Sakit</option>';
+                        sites.forEach(site => {
+                            const opt = document.createElement('option');
+                            opt.value = site.id;
+                            opt.textContent = site.name;
+                            siteSelect.appendChild(opt);
+                        });
+                    })
+                    .catch(() => {
+                        siteSelect.innerHTML = '<option value="">Gagal memuat</option>';
+                    });
+            });
+
+            // Saat klik tombol tampilkan
+            document.getElementById('filterBtn').addEventListener('click', function() {
+                let formData = new FormData(document.getElementById('filterForm'));
+                fetch("{{ route('reports.filter') }}", {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: formData
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        document.getElementById('reportResult').innerHTML = data.html;
+
+                        // ✅ Simpan filter terakhir ke tombol export (Excel & PDF)
+                        const form = document.getElementById('filterForm');
+                        const formDataObj = {};
+                        new FormData(form).forEach((value, key) => {
+                            if (!formDataObj[key]) formDataObj[key] = [];
+                            formDataObj[key].push(value);
+                        });
+                        const jsonFilters = JSON.stringify(formDataObj);
+
+                        // Tunggu DOM update, lalu isi hidden input
+                        setTimeout(() => {
+                            const excelInput = document.getElementById('excelFilters');
+                            const pdfInput = document.getElementById('pdfFilters');
+                            if (excelInput && pdfInput) {
+                                excelInput.value = jsonFilters;
+                                pdfInput.value = jsonFilters;
+                            }
+                        }, 300);
+                    })
+                    .catch(err => console.error(err));
+            });
+        });
+    </script>
+@endpush
