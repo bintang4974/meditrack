@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\{
+    AuthController,
     CategoryController,
     DashboardController,
     DoctorController,
@@ -17,6 +18,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', fn() => redirect()->route('login'));
 
 Auth::routes();
+Route::get('auth/google', [AuthController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -89,11 +92,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/projects/{project}/labels/filter', [LabelController::class, 'filter'])->name('labels.filter');
 
     // REPORT
-    Route::middleware(['auth'])->group(function () {
-        Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
-        Route::post('/reports/filter', [ReportController::class, 'filter'])->name('reports.filter');
-        Route::post('/reports/export/excel', [ReportController::class, 'exportExcel'])->name('reports.export.excel');
-        Route::post('/reports/export/pdf', [ReportController::class, 'exportPdf'])->name('reports.export.pdf');
-    });
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::post('/reports/filter', [ReportController::class, 'filter'])->name('reports.filter');
+    Route::post('/reports/export/excel', [ReportController::class, 'exportExcel'])->name('reports.export.excel');
+    Route::post('/reports/export/pdf', [ReportController::class, 'exportPdf'])->name('reports.export.pdf');
     Route::get('/reports/sites/{project}', [ReportController::class, 'getSites'])->name('reports.getSites');
 });
