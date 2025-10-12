@@ -17,7 +17,10 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('role', ['admin','doctor'])->default('doctor');
+            $table->enum('role', ['admin', 'doctor'])->default('doctor');
+            $table->string('google_id')->nullable()->unique();
+            $table->enum('membership', ['free', 'pro'])->default('free');
+            $table->timestamp('subscription_ends_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\{
+    AuthController,
     CategoryController,
     DashboardController,
     DoctorController,
@@ -17,6 +18,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', fn() => redirect()->route('login'));
 
 Auth::routes();
+Route::get('auth/google', [AuthController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

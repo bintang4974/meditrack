@@ -68,6 +68,7 @@
                                     <p class="small mb-0">Don't have account? <a href="pages-register.html">Create an
                                             account</a></p>
                                 </div>
+                                <a href="{{ route('auth.google') }}" class="btn btn-danger w-100">Sign In With Google</a>
                             </form>
                         </div>
                     </div>
