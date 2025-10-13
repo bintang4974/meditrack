@@ -55,4 +55,19 @@ class User extends Authenticatable
             ->withPivot('role_in_project')
             ->withTimestamps();
     }
+
+    public function isPro()
+    {
+        return $this->membership === 'pro' && $this->subscription_ends_at > now();
+    }
+
+    public function isFree()
+    {
+        return $this->membership === 'free';
+    }
+
+    public function isExpiredPro()
+    {
+        return $this->membership === 'expired_pro' || ($this->membership === 'pro' && $this->subscription_ends_at < now());
+    }
 }
