@@ -11,6 +11,7 @@ use App\Http\Controllers\{
     ProjectController,
     ReportController,
     SiteController,
+    SubscriptionController,
     TagController
 };
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,11 @@ Route::get('/', fn() => redirect()->route('login'));
 Auth::routes();
 Route::get('auth/google', [AuthController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
+
+// Route::post('/projects', [ProjectController::class, 'store'])->middleware('check.subscription:create_project');
+// Route::post('/entries', [EntryController::class, 'store'])->middleware('check.subscription:create_entry');
+// Route::post('/uploads', [UploadController::class, 'store'])->middleware('check.subscription:upload_file');
+
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -97,4 +103,13 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/reports/export/excel', [ReportController::class, 'exportExcel'])->name('reports.export.excel');
     Route::post('/reports/export/pdf', [ReportController::class, 'exportPdf'])->name('reports.export.pdf');
     Route::get('/reports/sites/{project}', [ReportController::class, 'getSites'])->name('reports.getSites');
+
+    Route::get('/subscription', [SubscriptionController::class, 'index'])->name('subscription.index');
+    Route::post('/subscription/create', [SubscriptionController::class, 'createTransaction'])->name('subscription.create');
+    Route::post('/subscription/callback', [SubscriptionController::class, 'callback'])->name('subscription.callback');
 });
+
+// Hanya Free tapi cek limit
+Route::middleware(['auth', 'check.pro.status', 'free:project'])->post('/projects/store', [ProjectController::class, 'store'])->name('projects.store');
+Route::middleware(['auth', 'check.pro.status', 'free:entry'])->post('/entries/store', [EntryController::class, 'store'])->name('entries.store');
+

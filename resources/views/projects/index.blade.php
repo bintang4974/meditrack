@@ -11,6 +11,13 @@
         </nav>
     </div><!-- End Page Title -->
 
+    @if (auth()->user()->isExpiredPro())
+        <div class="alert alert-warning">
+            Langganan Pro Anda telah berakhir. Anda tetap dapat membaca, memperbarui, dan menghapus data,
+            namun tidak dapat menambahkan data baru. <a href="{{ route('subscription.index') }}">Perpanjang Sekarang</a>
+        </div>
+    @endif
+
     <section class="section">
         <div class="row mb-4">
             <div class="col-md-6">

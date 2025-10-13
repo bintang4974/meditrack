@@ -8,6 +8,17 @@
     <title>Meditrack</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
+    <meta http-equiv="Content-Security-Policy"
+        content="
+      default-src 'self' data: blob: https:;
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://app.sandbox.midtrans.com https://api.sandbox.midtrans.com https://snap-assets.al-pc-id-b.cdn.gtflabs.io https://pay.google.com https://js-agent.newrelic.com https://bam.nr-data.net;
+      worker-src blob:;
+      connect-src 'self' {{ config('app.url') }} https://app.sandbox.midtrans.com https://api.sandbox.midtrans.com;
+      frame-src https://app.sandbox.midtrans.com https://api.sandbox.midtrans.com https://*.midtrans.com https://pay.google.com;
+      img-src 'self' data: https:;
+      style-src 'self' 'unsafe-inline' https:;
+      ">
+
 
     <!-- Favicons -->
     <link href="{{ asset('template') }}/assets/img/favicon.png" rel="icon">

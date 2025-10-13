@@ -34,8 +34,14 @@ class AuthController extends Controller
             Auth::login($user);
 
             return redirect('/dashboard');
-        } catch (Exception $e) {
-            dd($e);
+        } catch (\Throwable $e) {
+            return redirect('/login')->with('error', 'Login Google gagal: ' . $e->getMessage());
         }
+    }
+
+    public function logout()
+    {
+        Auth::logout();
+        return redirect('/')->with('info', 'Berhasil logout.');
     }
 }
