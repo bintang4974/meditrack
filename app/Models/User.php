@@ -58,16 +58,16 @@ class User extends Authenticatable
 
     public function isPro()
     {
-        return $this->membership === 'pro' && $this->subscription_ends_at > now();
+        return $this->membership === 'pro' && $this->subscription_ends_at && now()->lt($this->subscription_ends_at);
     }
 
     public function isFree()
     {
-        return $this->membership === 'free';
+        return $this->membership === 'free' || !$this->isPro();
     }
 
     public function isExpiredPro()
     {
-        return $this->membership === 'expired_pro' || ($this->membership === 'pro' && $this->subscription_ends_at < now());
+        return $this->membership === 'pro' && $this->subscription_ends_at && now()->gt($this->subscription_ends_at);
     }
 }

@@ -64,7 +64,6 @@ class SubscriptionController extends Controller
         }
     }
 
-
     // Callback dari Midtrans setelah pembayaran selesai
     public function callback(Request $request)
     {

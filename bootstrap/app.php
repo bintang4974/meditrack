@@ -13,9 +13,10 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
+            'check.pro'       => \App\Http\Middleware\CheckPro::class,
             'check.pro.status' => \App\Http\Middleware\CheckProStatus::class,
-            'pro' => \App\Http\Middleware\CheckPro::class,
-            'free' => \App\Http\Middleware\CheckFreeLimit::class,
+            'check.free.limit' => \App\Http\Middleware\CheckFreeLimit::class,
+            'feature.access' => \App\Http\Middleware\CheckFeatureAccess::class,
         ]);
         // middleware global (jika ingin global)
         // $middleware->use(SomeGlobalMiddleware::class);

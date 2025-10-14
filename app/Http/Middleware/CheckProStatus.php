@@ -19,10 +19,9 @@ class CheckProStatus
     {
         $user = Auth::user();
 
-        if ($user && $user->membership === 'pro') {
-            if ($user->subscription_ends_at && Carbon::now()->greaterThan($user->subscription_ends_at)) {
-                // downgrade otomatis
-                $user->update(['membership' => 'expired_pro']);
+        if ($user && $user->membership === 'pro' && $user->subscription_ends_at) {
+            if (now()->greaterThan($user->subscription_ends_at)) {
+                $user->update(['membership' => 'free', 'subscription_ends_at' => null]);
             }
         }
 

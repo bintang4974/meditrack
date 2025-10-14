@@ -21,30 +21,35 @@ class CheckFreeLimit
     {
         $user = Auth::user();
 
-        // Jika user bukan free, lewati
-        if ($user->membership !== 'free') {
+        // Jika Pro, lewati
+        if ($user->membership === 'pro') {
             return $next($request);
         }
 
+        // Free user
         if ($type === 'project') {
             $count = Project::where('owner_id', $user->id)->count();
             if ($count >= 2) {
-                return redirect()->back()->with('error', 'Batas maksimal 2 project untuk akun Free.');
+                return back()->with('error', 'Batas maksimal 2 project untuk akun Free.');
             }
         }
 
         if ($type === 'entry') {
-            $count = Entry::where('created_by', $user->id)
-                ->whereMonth('created_at', Carbon::now()->month)
-                ->whereYear('created_at', Carbon::now()->year)
+            $monthlyCount = Entry::where('created_by', $user->id)
+                ->whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year)
                 ->count();
 
-            if ($count >= 5) {
-                return redirect()->back()->with('error', 'Batas maksimal 5 entries per bulan untuk akun Free.');
+            if ($monthlyCount >= 5) {
+                return back()->with('error', 'Batas maksimal 5 entries per bulan untuk akun Free.');
+            }
+
+            // ❌ Tidak boleh upload file/gambar
+            if ($request->hasFile('image_file') || $request->hasFile('document_file')) {
+                return back()->with('error', 'Upload file hanya tersedia untuk akun Pro.');
             }
         }
 
         return $next($request);
-        // return $next($request);
     }
 }
