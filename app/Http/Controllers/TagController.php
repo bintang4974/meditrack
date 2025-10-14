@@ -10,11 +10,25 @@ use Illuminate\Support\Facades\Auth;
 
 class TagController extends Controller
 {
-    // public function index()
-    // {
-    //     $tags = Tag::where('status', 'active')->get();
-    //     return view('tags.index', compact('tags'));
-    // }
+    public function __construct()
+    {
+        $this->middleware('feature.access:tag_manage')->except(['index', 'show']);
+    }
+
+    public function index(Project $project, Request $request)
+    {
+        $status = $request->query('status', 'active'); // default: active
+
+        $query = Tag::where('project_id', $project->id);
+
+        if ($status !== 'all') {
+            $query->where('status', $status);
+        }
+
+        $tags = $query->orderBy('name')->get();
+
+        return view('tags.index', compact('project', 'tags', 'status'));
+    }
 
     public function show(Project $project, Tag $tag)
     {
@@ -56,33 +70,6 @@ class TagController extends Controller
 
         return view('tags.filter', compact('project', 'tags', 'patients', 'selectedTags'));
     }
-
-    // List Tags per Project
-    // public function index(Project $project)
-    // {
-    //     $pageTitle = "Daftar Tags";
-    //     $tags = Tag::where('project_id', $project->id)
-    //         ->orderByRaw("FIELD(status, 'active', 'inactive')")
-    //         ->get();
-    //     $isOwner = $project->owner_id === Auth::id();
-
-    //     return view('tags.index', compact('pageTitle', 'project', 'tags', 'isOwner'));
-    // }
-    public function index(Project $project, Request $request)
-    {
-        $status = $request->query('status', 'active'); // default: active
-
-        $query = Tag::where('project_id', $project->id);
-
-        if ($status !== 'all') {
-            $query->where('status', $status);
-        }
-
-        $tags = $query->orderBy('name')->get();
-
-        return view('tags.index', compact('project', 'tags', 'status'));
-    }
-
 
     // Form Tambah Tag
     public function create(Project $project)

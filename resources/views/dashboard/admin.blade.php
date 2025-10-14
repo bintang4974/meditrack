@@ -13,8 +13,16 @@
     </div><!-- End Page Title -->
 
     <section class="section">
-        <div class="row">
 
+        @if (auth()->check() && auth()->user()->isFree())
+            <div class="alert alert-info mb-3">
+                Akun kamu saat ini <strong>Free</strong>. Beberapa fitur seperti Tag, Label, Upload, dan Ekspor Laporan
+                hanya tersedia untuk pengguna <strong>Pro</strong>.
+                <a href="{{ route('subscription.index') }}" class="btn btn-sm btn-success">Upgrade Sekarang</a>
+            </div>
+        @endif
+
+        <div class="row">
             {{-- Stat Cards --}}
             <div class="col-lg-3 col-6">
                 <div class="card info-card">

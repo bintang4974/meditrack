@@ -18,6 +18,14 @@
         </div>
     @endif
 
+    @if (auth()->user()->isFree())
+        <div class="alert alert-info">
+            Akun Free: maksimal 2 project dan 5 entries per bulan.
+            <a href="{{ route('subscription.index') }}">Upgrade ke Pro</a>
+        </div>
+    @endif
+
+
     <section class="section">
         <div class="row mb-4">
             <div class="col-md-6">

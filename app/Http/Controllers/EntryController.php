@@ -18,15 +18,15 @@ use Intervention\Image\ImageManager;
 
 class EntryController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('check.free.limit:entry')->only('store');
+    }
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        // $pageTitle = 'Entry';
-        // $entries = Entry::with('category')->latest()->get();
-        // return view('entry.index', compact('entries', 'pageTitle'));
-    }
+    public function index() {}
 
     /**
      * Show the form for creating a new resource.

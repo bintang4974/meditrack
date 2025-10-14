@@ -11,6 +11,11 @@ use Illuminate\Support\Str;
 
 class ProjectController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('check.free.limit:project')->only('store');
+    }
+
     public function index()
     {
         $pageTitle = 'Project';
