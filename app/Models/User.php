@@ -70,4 +70,9 @@ class User extends Authenticatable
     {
         return $this->membership === 'pro' && $this->subscription_ends_at && now()->gt($this->subscription_ends_at);
     }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
 }

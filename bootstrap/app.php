@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Middleware\CheckSubscription;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -18,12 +17,26 @@ return Application::configure(basePath: dirname(__DIR__))
             'check.free.limit' => \App\Http\Middleware\CheckFreeLimit::class,
             'feature.access' => \App\Http\Middleware\CheckFeatureAccess::class,
         ]);
-        // middleware global (jika ingin global)
-        // $middleware->use(SomeGlobalMiddleware::class);
 
-        // middleware route
-        // $middleware->alias([
-        //     'check.subscription' => CheckSubscription::class,
+        // REGISTER web middleware group (versi baru)
+        $middleware->web(append: [
+            \Illuminate\Cookie\Middleware\EncryptCookies::class,
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+            \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+        ]);
+
+        // ✅ Gunakan metode resmi Laravel 11–12 untuk exclude CSRF
+        $middleware->validateCsrfTokens(except: [
+            'subscription/callback',
+            'subscription/clientNotify',
+        ]);
+
+        // 🚀 Tambahkan ini untuk men-disable CSRF khusus untuk callback Midtrans
+        // $middleware->validateCsrfTokens(except: [
+        //     'subscription/callback',
+        //     'subscription/clientNotify',
         // ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
