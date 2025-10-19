@@ -144,9 +144,10 @@ Route::middleware(['auth'])->group(function () {
     // ===============================
     // 💳 SUBSCRIPTION
     // ===============================
+    // routes/web.php (di dalam group auth)
     Route::get('/subscription', [SubscriptionController::class, 'index'])->name('subscription.index');
     Route::post('/subscription/create', [SubscriptionController::class, 'createTransaction'])->name('subscription.create');
-    Route::post('/subscription/callback', [SubscriptionController::class, 'callback'])->name('subscription.callback');
+    Route::post('/subscription/notify', [SubscriptionController::class, 'clientNotify'])->name('subscription.clientNotify'); // optional: client post after snap.onSuccess
+    Route::get('/subscription/history', [SubscriptionController::class, 'history'])->name('subscription.history');
 });
-
-
+Route::post('/subscription/callback', [SubscriptionController::class, 'callback'])->name('subscription.callback'); // midtrans server callback

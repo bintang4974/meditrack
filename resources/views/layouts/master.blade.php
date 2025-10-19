@@ -117,6 +117,15 @@
                         </li>
 
                     </ul><!-- End Profile Dropdown Items -->
+                    {{-- @if (auth()->check())
+                        <div class="alert alert-info text-center mb-0">
+                            Status: <strong>{{ strtoupper(auth()->user()->membership) }}</strong>
+                            @if (auth()->user()->subscription_ends_at)
+                                (berakhir {{ auth()->user()->subscription_ends_at->format('d M Y') }})
+                            @endif
+                        </div>
+                    @endif --}}
+
                 </li><!-- End Profile Nav -->
 
             </ul>
