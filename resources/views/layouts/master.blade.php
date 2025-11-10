@@ -74,6 +74,16 @@
         <nav class="header-nav ms-auto">
             <ul class="d-flex align-items-center">
 
+                @if (auth()->check())
+                    <span class="badge rounded-pill text-bg-info">
+                        Status: <strong>{{ strtoupper(auth()->user()->membership) }}</strong>
+                        @if (auth()->user()->subscription_ends_at)
+                            (berakhir
+                            {{ Carbon\Carbon::parse(auth()->user()->subscription_ends_at)->format('Y-m-d') }})
+                        @endif
+                    </span>
+                @endif
+
                 <li class="nav-item dropdown pe-3">
 
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#"
@@ -117,14 +127,6 @@
                         </li>
 
                     </ul><!-- End Profile Dropdown Items -->
-                    {{-- @if (auth()->check())
-                        <div class="alert alert-info text-center mb-0">
-                            Status: <strong>{{ strtoupper(auth()->user()->membership) }}</strong>
-                            @if (auth()->user()->subscription_ends_at)
-                                (berakhir {{ auth()->user()->subscription_ends_at->format('d M Y') }})
-                            @endif
-                        </div>
-                    @endif --}}
 
                 </li><!-- End Profile Nav -->
 
@@ -163,6 +165,14 @@
                     <span>Report</span>
                 </a>
             </li>
+
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('subscription/history') ? 'active' : 'collapsed' }}"
+                    href="{{ route('subscription.history') }}">
+                    <i class="bi bi-credit-card-2-front"></i>
+                    <span>Payment</span>
+                </a>
+            </li>
         </ul>
 
     </aside><!-- End Sidebar-->
@@ -176,14 +186,14 @@
     <!-- ======= Footer ======= -->
     <footer id="footer" class="footer">
         <div class="copyright">
-            &copy; Copyright <strong><span>NiceAdmin</span></strong>. All Rights Reserved
+            &copy; Copyright <strong><span>Clinical Logbook</span></strong>. All Rights Reserved
         </div>
         <div class="credits">
             <!-- All the links in the footer should remain intact. -->
             <!-- You can delete the links only if you purchased the pro version. -->
             <!-- Licensing information: https://bootstrapmade.com/license/ -->
             <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
-            Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+            {{-- Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a> --}}
         </div>
     </footer><!-- End Footer -->
 

@@ -48,7 +48,7 @@
                             </div>
                             <div class="col-12">
                                 <label for="age" class="form-label">Umur</label>
-                                <input type="number" name="age" class="form-control" id="age">
+                                <input type="number" name="age" class="form-control" id="age" readonly>
                             </div>
                             <div class="col-12">
                                 <label for="phone_number" class="form-label">No. Telepon</label>
@@ -91,3 +91,24 @@
             </div>
     </section>
 @endsection
+
+@push('scripts')
+    <script>
+        document.getElementById('dob').addEventListener('change', function() {
+            let dob = new Date(this.value);
+            let today = new Date();
+
+            if (!this.value) return;
+
+            let age = today.getFullYear() - dob.getFullYear();
+            let monthDiff = today.getMonth() - dob.getMonth();
+
+            // Sesuaikan umur jika bulan/hari belum lewat
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+                age--;
+            }
+
+            document.getElementById('age').value = age;
+        });
+    </script>
+@endpush

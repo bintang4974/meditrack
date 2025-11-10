@@ -18,6 +18,9 @@ use Illuminate\Support\Facades\Route;
 
 // Redirect root ke login
 Route::get('/', fn() => redirect()->route('login'));
+Route::get('/landing', function () {
+    return view('landing');
+});
 
 // Auth (default Laravel + Google)
 Auth::routes();

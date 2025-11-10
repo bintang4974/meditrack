@@ -27,17 +27,11 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
         ]);
 
-        // ✅ Gunakan metode resmi Laravel 11–12 untuk exclude CSRF
+        // men-disable CSRF khusus untuk callback Midtrans
         $middleware->validateCsrfTokens(except: [
             'subscription/callback',
             'subscription/clientNotify',
         ]);
-
-        // 🚀 Tambahkan ini untuk men-disable CSRF khusus untuk callback Midtrans
-        // $middleware->validateCsrfTokens(except: [
-        //     'subscription/callback',
-        //     'subscription/clientNotify',
-        // ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

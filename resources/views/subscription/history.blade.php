@@ -6,7 +6,7 @@
     <section class="section">
         <div class="card p-4">
             <h5>History</h5>
-            <table class="table">
+            <table class="table datatable">
                 <thead>
                     <tr>
                         <th>#</th>
